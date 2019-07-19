@@ -2,15 +2,12 @@ const mongoose = require('mongoose');
 const users  = require('./userModel');
 const products = require('./productModel');
 
-
-
-const indexSchema = new mongoose.Schema({
+const mainSchema = new mongoose.Schema({
     users: [users],
     products: [products]
 },{collection:'products'});
 
-let objects = mongoose.model('Index', indexSchema);
+const main = mongoose.model('Main', mainSchema);
 
-
-module.exports = objects;
+module.exports = main;
 

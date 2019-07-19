@@ -1,4 +1,4 @@
-let index = require('../models/index');
+let index = require('../models/mainSchema');
 
 module.exports = function (app) {
     app.get('/api/seedData', function (req, res) {
