@@ -1,0 +1,23 @@
+.DS_Store
+node_modules/
+/dist/
+/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/test/unit/coverage/
+/test/e2e/reports/
+selenium-debug.log
+.dobi
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.iml
+docker-compose.override.yml
+teardown.override.sh
+.env

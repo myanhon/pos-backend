@@ -1,0 +1,6 @@
+require('dotenv').config();
+module.exports = {
+    getDbConnectionString: function () {
+        return process.env.MONGO_URI;
+    }
+};
