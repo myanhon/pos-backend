@@ -27,7 +27,9 @@ app.use(function (req, res, next) {
     next();
 });
 
-mongoose.connect(config.getDbConnectionString(),{ useNewUrlParser: true });
+mongoose.connect(config.getDbConnectionUsers(),{ useNewUrlParser: true });
+mongoose.connect(config.getDbConnectionProducts(),{ useNewUrlParser: true });
+
 apiController(app);
 seedDataController(app);
 app.listen(port);

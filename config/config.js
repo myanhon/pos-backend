@@ -1,6 +1,9 @@
 require('dotenv').config();
 module.exports = {
-    getDbConnectionString: function () {
-        return process.env.MONGO_URI;
+    getDbConnectionUsers: function () {
+        return process.env.MONGO_USERS_URI;
+    },
+    getDbConnectionProducts: function () {
+        return process.env.MONGO_PRODUCT_URI;
     }
 };
