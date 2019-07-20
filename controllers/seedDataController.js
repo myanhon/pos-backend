@@ -32,11 +32,9 @@ let seedProductsData = [
         pricing: '13$',
         category: [{name: 'vegetable'}]
     }
-
 ];
 
 module.exports = function (app) {
-
 
     app.get('/api/seedData', function (req, res) {
 
@@ -47,6 +45,15 @@ module.exports = function (app) {
         product.create(seedProductsData, function (err) {
             if (err) throw err;
         });
-        res.send(200);
+        res.sendStatus(200);
     });
+
+    app.get('/api/deleteSeed', function (req, res) {
+        user.remove({});
+        product.remove({});
+        res.send('Collections Emptied');
+    });
+
 };
+
+
