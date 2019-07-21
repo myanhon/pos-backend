@@ -7,33 +7,37 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({extended: true}));
 
     app.get('/api/users',(req,res)=>{
-        user.find().select(selectString).exec().then(
-            docs =>{
+        user.find()
+            .select(selectString)
+            .exec()
+            .then(docs => {
                 res.status(200).json(docs);
-            }
-        ).catch(err =>{
-            res.status(500).json({
-                error: err
+            })
+            .catch(err => {
+                res.status(500).json({
+                    error: err
+                });
             });
-        });
     });
 
     app.get('/api/users/:email', (req, res) => {
-        user.findOne({email: req.params.email}).select(selectString).exec().then(
-            user => {
-                if(!user) {
-                    return res.status(404).json({
-                        message: 'User not found'
-                    });
-                }
-
-                res.status(200).json(user);
-            }
-        ).catch(err => {
-            res.status(500).json({
-                error: err
-            })
-        })
+        user.findOne({email: req.params.email})
+            .select(selectString)
+            .exec()
+            .then(
+                user => {
+                    if (!user) {
+                        return res.status(404).json({
+                            message: 'User not found'
+                        });
+                    }
+                    res.status(200).json(user);
+                })
+            .catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            });
     });
 
     app.post('/api/user', (req, res) => {
@@ -43,15 +47,17 @@ module.exports = function (app) {
                 email: req.body.email,
                 password: req.body.password,
                 role: req.body.role
-            }).exec().then(doc => {
-                res.status(200).json({
-                    message:'User updated'
-                });
-            }).catch(err => {
+            }).exec()
+                .then(doc => {
+                    res.status(200).json({
+                        message: 'User updated'
+                    });
+                }).catch(err => {
+
                 res.status(500).json({
                     error: err
                 });
-            })
+            });
         } else {
             const newUser = user({
                 name: req.body.name,
@@ -59,15 +65,16 @@ module.exports = function (app) {
                 password: req.body.password,
                 role: req.body.role
             });
-            newUser.save().then(
-                res.status(200).json({
-                    message: 'User saved'
-                })
-            ).catch(err =>{
-                res.send(500).json({
-                    error: err
-                })
-            });
+            newUser.save()
+                .then(
+                    res.status(200).json({
+                        message: 'User saved'
+                    }))
+                .catch(err => {
+                    res.send(500).json({
+                        error: err
+                    })
+                });
         }
     });
 

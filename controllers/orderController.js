@@ -12,26 +12,27 @@ module.exports = function (app) {
         order.find()
             .select(selectString)
             .exec()
-            .then(docs =>{
-            res.status(200).json({
-                count:docs.length,
-                orders: docs.map(doc =>{
-                    return {
-                        _id: doc._id,
-                        product: doc.product,
-                        quantity: doc.quantity,
-                        request: {
-                            type: 'GET',
-                            url: 'http://localhost:3000/api/order/' + doc._id
-                        }
-                    };
-                })
-            });
-        }).catch(err =>{
+            .then(docs => {
+                res.status(200).json({
+                    count: docs.length,
+                    orders: docs.map(doc => {
+                        return {
+                            _id: doc._id,
+                            product: doc.product,
+                            quantity: doc.quantity,
+                            request: {
+                                type: 'GET',
+                                url: 'http://localhost:3000/api/order/' + doc._id
+                            }
+                        };
+                    })
+                });
+            }).catch(err => {
+
             res.status(500).json({
                 error: err
             })
-        })
+        });
     });
 
     app.get('/api/order/:orderId',function (req,res) {
@@ -41,7 +42,7 @@ module.exports = function (app) {
             .then(order => {
                 res.status(200).json({
                     order: order,
-                    rquest:{
+                    rquest: {
                         type: 'GET',
                         url: 'http://localhost:3000/api/orders'
                     }
@@ -58,16 +59,16 @@ module.exports = function (app) {
     app.post('/api/order', (req, res) => {
         product.findById(req.body.productId)
             .then(product => {
-            const newOrder = order({
-                quantity: req.body.quantity,
-                product: req.body.productId
-            });
-            return newOrder.save().catch(err => {
-                res.status(500).json({
-                    error: err
-                })
-            });
-        }).then(result => {
+                const newOrder = order({
+                    quantity: req.body.quantity,
+                    product: req.body.productId
+                });
+                return newOrder.save().catch(err => {
+                    res.status(500).json({
+                        error: err
+                    })
+                });
+            }).then(result => {
             res.status(200).json({
                 message: 'Order stored',
                 createdOrder: {
@@ -96,14 +97,14 @@ module.exports = function (app) {
                     request: {
                         type: 'POST',
                         url: 'http://localhost:3000/api/orders',
-                        body:{
+                        body: {
                             productId: "ID",
                             quantity: "Number"
                         }
                     }
                 });
             })
-            .catch(err =>{
+            .catch(err => {
                 res.status(500).json({
                     error: err
                 });
