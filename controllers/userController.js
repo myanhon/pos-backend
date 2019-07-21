@@ -1,56 +1,86 @@
 const user = require('../models/userModel');
 const bodyParser = require('body-parser');
+const selectString = 'name email password role';
 
 module.exports = function (app) {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
-    app.get('/api/user/:email', function (req, res) {
-        user.findOne({email:req.params.email}, function (err, data) {
-            if (err){
-                res.sendStatus(500).send('Something broke!');
+    app.get('/api/users',(req,res)=>{
+        user.find().select(selectString).exec().then(
+            docs =>{
+                res.status(200).json(docs);
             }
-            res.send(data);
+        ).catch(err =>{
+            res.status(500).json({
+                error: err
+            });
         });
     });
 
-    app.post('/api/user', function (req, res) {
-        if (req.body.id) {
-            user.findByIdAndUpdate(req.body.id,
-                {
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: req.body.password,
-                    role: req.body.role
-                }, function (err) {
-                    if (err){
-                        console.log(err);
-                        res.sendStatus(500).send('Something broke!')
-                    }
-                    res.send('Success');
+    app.get('/api/users/:email', (req, res) => {
+        user.findOne({email: req.params.email}).select(selectString).exec().then(
+            user => {
+                if(!user) {
+                    return res.status(404).json({
+                        message: 'User not found'
+                    });
+                }
+
+                res.status(200).json(user);
+            }
+        ).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        })
+    });
+
+    app.post('/api/user', (req, res) => {
+        if (req.body._id) {
+            user.findByIdAndUpdate(req.body._id, {
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
+                role: req.body.role
+            }).exec().then(doc => {
+                res.status(200).json({
+                    message:'User updated'
                 });
-        }
-        else {
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                });
+            })
+        } else {
             let newUser = user({
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
                 role: req.body.role
             });
-            newUser.save(function (err) {
-                if(err) throw err;
-                res.send(200, 'User Saved');
+            newUser.save().then(
+                res.status(200).json({
+                    message: 'User saved'
+                })
+            ).catch(err =>{
+                res.send(500).json({
+                    error: err
+                })
             });
         }
     });
 
-    app.delete('/api/user', function (req, res) {
-        user.findByIdAndDelete(req.body.id, function (err) {
-            if (err){
-                console.log(err);
-                res.sendStatus(500).send('Something broke!');
-            }
-            res.send('Deleted User');
+
+    app.delete('/api/user', (req, res) => {
+        user.remove({_id: req.body._id}).exec().then(result => {
+            res.status(200).json({
+                message: 'User deleted'
+            });
+        }).catch(err => {
+            res.send(500).json({
+                error: err
+            });
         });
     });
 

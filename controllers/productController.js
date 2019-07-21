@@ -1,58 +1,82 @@
 const product = require('../models/productModel');
 const bodyParser = require('body-parser');
+const selectString = 'name price  category';
 
 module.exports = function (app) {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
-    app.get('/api/product/:name', function (req, res) {
-        product.findOne({name: req.params.name}, function (err, data) {
-            if (err) {
-                res.sendStatus(500).send('Something broke!')
+    app.get('/api/products',(req,res)=>{
+        product.find().select(selectString).exec().then(
+            docs =>{
+                res.status(200).json(docs);
             }
-            res.send(data);
+        ).catch(err =>{
+            res.status(500).json({
+                error: err
+            });
         });
     });
 
-    app.post('/api/product', function (req, res) {
-        if (req.body.id) {
-            product.findByIdAndUpdate(req.body.id,
-                {
-                    name: req.body.name,
-                    price: req.body.price,
-                    category: req.body.category
-                }, function (err) {
-                    if (err){
-                        console.log(err);
-                        res.sendStatus(500).send('Something broke!')
-                    }
-                    res.send('Updated Product');
+    app.get('/api/products/:name', (req, res) => {
+        product.findOne({name: req.params.name}).select(selectString).exec().then(
+            product => {
+                if(!product) {
+                    return res.status(404).json({
+                        message: 'Product not found'
+                    });
+                }
+                res.status(200).json(product);
+            }
+        ).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        })
+    });
+
+    app.post('/api/product', (req, res) => {
+        if (req.body._id) {
+            product.findByIdAndUpdate(req.body._id, {
+                name: req.body.name,
+                price: req.body.price,
+                category: req.body.category
+            }).exec().then(doc => {
+                res.status(200).json({
+                    message:'Product updated'
                 });
-        }
-        else {
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                });
+            })
+        } else {
             let newProduct = product({
                 name: req.body.name,
                 price: req.body.price,
                 category: req.body.category
             });
-            newProduct.save(function (err) {
-                if (err){
-                    console.log(err);
-                    res.sendStatus(500).send('Something broke!');
-                }
-                res.send('Product Saved');
+            newProduct.save().then(
+                res.status(200).json({
+                    message: 'Product saved'
+                })
+            ).catch(err =>{
+                res.send(500).json({
+                    error: err
+                })
             });
         }
     });
 
-    app.delete('/api/product', function (req, res) {
-        product.findByIdAndDelete(req.body.id, function (err) {
-            if (err){
-                console.log(err);
-                res.status(500).send('Something broke!');
-            }
-            res.send('Deleted Product');
+    app.delete('/api/product', (req, res) => {
+        product.remove({_id: req.body._id}).exec().then(result => {
+            res.status(200).json({
+                message: 'Product deleted'
+            });
+        }).catch(err => {
+            res.send(500).json({
+                error: err
+            });
         });
     });
-
 };
