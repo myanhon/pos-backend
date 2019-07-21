@@ -53,7 +53,7 @@ module.exports = function (app) {
                 });
             })
         } else {
-            let newUser = user({
+            const newUser = user({
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,

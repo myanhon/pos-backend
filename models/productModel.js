@@ -9,8 +9,8 @@ const categorySchema = new Schema({
 
 const productSchema = new Schema({
     name: String,
-    price: String,
-    category: [categorySchema],
+    price: Number,
+    category: [categorySchema]
 });
 
 let products = mongoose.model('Product', productSchema);

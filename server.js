@@ -5,6 +5,7 @@ const config = require('./config/config');
 const seedDataController = require('./controllers/seedDataController');
 const productController = require('./controllers/productController');
 const userController = require('./controllers/userController');
+const orderController = require('./controllers/orderController');
 
 const port = process.env.PORT || 3000;
 
@@ -29,9 +30,10 @@ app.use(function (req, res, next) {
 });
 
 mongoose.connect(config.getDbConnectionUsers(),{ useNewUrlParser: true });
-mongoose.connect(config.getDbConnectionProducts(),{ useNewUrlParser: true });
+
 
 productController(app);
 userController(app);
+orderController(app);
 seedDataController(app);
 app.listen(port);

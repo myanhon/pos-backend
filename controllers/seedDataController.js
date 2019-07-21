@@ -19,17 +19,17 @@ let seedUsersData = [
 let seedProductsData = [
     {
         name: 'Pork',
-        pricing: '1$',
+        price: 12,
         category: [{name: 'meat'}]
     },
     {
         name: 'Brocolli',
-        pricing: '15$',
+        price: 14,
         category: [{name: 'vegetable'}]
     },
     {
         name: 'Carrot',
-        pricing: '13$',
+        price: 15,
         category: [{name: 'vegetable'}]
     }
 ];

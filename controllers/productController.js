@@ -1,6 +1,6 @@
 const product = require('../models/productModel');
 const bodyParser = require('body-parser');
-const selectString = 'name price  category';
+const selectString = 'name price quantity category';
 
 module.exports = function (app) {
     app.use(bodyParser.json());
@@ -51,7 +51,7 @@ module.exports = function (app) {
                 });
             })
         } else {
-            let newProduct = product({
+            const newProduct = product({
                 name: req.body.name,
                 price: req.body.price,
                 category: req.body.category
@@ -61,7 +61,7 @@ module.exports = function (app) {
                     message: 'Product saved'
                 })
             ).catch(err =>{
-                res.send(500).json({
+                res.status(500).json({
                     error: err
                 })
             });
