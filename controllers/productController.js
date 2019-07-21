@@ -7,7 +7,9 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({extended: true}));
 
     app.get('/api/products',(req,res)=>{
-        product.find().select(selectString).exec().then(
+        product.find().select(selectString)
+            .exec()
+            .then(
             docs =>{
                 res.status(200).json(docs);
             }
@@ -19,7 +21,10 @@ module.exports = function (app) {
     });
 
     app.get('/api/products/:name', (req, res) => {
-        product.findOne({name: req.params.name}).select(selectString).exec().then(
+        product.findOne({name: req.params.name})
+            .select(selectString)
+            .exec()
+            .then(
             product => {
                 if(!product) {
                     return res.status(404).json({
@@ -41,15 +46,16 @@ module.exports = function (app) {
                 name: req.body.name,
                 price: req.body.price,
                 category: req.body.category
-            }).exec().then(doc => {
-                res.status(200).json({
-                    message:'Product updated'
-                });
-            }).catch(err => {
+            }).exec()
+                .then(doc => {
+                    res.status(200).json({
+                        message: 'Product updated'
+                    });
+                }).catch(err => {
                 res.status(500).json({
                     error: err
                 });
-            })
+            });
         } else {
             const newProduct = product({
                 name: req.body.name,
@@ -69,7 +75,9 @@ module.exports = function (app) {
     });
 
     app.delete('/api/product', (req, res) => {
-        product.remove({_id: req.body._id}).exec().then(result => {
+        product.remove({_id: req.body._id})
+            .exec()
+            .then(result => {
             res.status(200).json({
                 message: 'Product deleted'
             });
