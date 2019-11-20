@@ -35,5 +35,7 @@ mongoose.connect(config.getDbConnectionUsers(),{ useNewUrlParser: true });
 productController(app);
 userController(app);
 orderController(app);
-seedDataController(app);
+if(process.env.ENV === "DEV"){
+    seedDataController(app,mongoose);
+}
 app.listen(port);

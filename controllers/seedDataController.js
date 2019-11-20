@@ -19,22 +19,26 @@ let seedUsersData = [
 let seedProductsData = [
     {
         name: 'Pork',
+        amount: 5,
         price: 12,
-        category: [{name: 'meat'}]
+        category: [{name: 'meat'}],
     },
     {
         name: 'Brocolli',
+        amount: 5,
         price: 14,
         category: [{name: 'vegetable'}]
     },
     {
         name: 'Carrot',
+        amount: 5,
         price: 15,
-        category: [{name: 'vegetable'}]
+        category: [{name: 'vegetable'}],
+
     }
 ];
 
-module.exports = function (app) {
+module.exports = function (app,mongoose) {
 
     app.get('/api/seedData', function (req, res) {
 
@@ -49,8 +53,14 @@ module.exports = function (app) {
     });
 
     app.get('/api/deleteSeed', function (req, res) {
-        user.remove({});
-        product.remove({});
+
+        mongoose.connection.collections['users'].drop(() => {
+            console.log('users dropped');
+        });
+
+        mongoose.connection.collections['products'].drop(() => {
+            console.log('products dropped');
+        });
         res.send('Collections Emptied');
     });
 

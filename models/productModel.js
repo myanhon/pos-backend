@@ -3,14 +3,11 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const categorySchema = new Schema({
-    name: String
-});
-
 const productSchema = new Schema({
     name: String,
+    amount: Number,
     price: Number,
-    category: [categorySchema]
+    category: [{name:String}]
 });
 
 let products = mongoose.model('Product', productSchema);
