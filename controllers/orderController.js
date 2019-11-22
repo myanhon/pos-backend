@@ -30,6 +30,7 @@ module.exports = function (app) {
                     rquest: {
                         type: 'GET',
                         url: 'http://localhost:3000/api/orders'
+
                     }
                 });
             })
