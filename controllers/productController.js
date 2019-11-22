@@ -1,4 +1,4 @@
-const product = require('../models/productModel');
+const Product = require('../models/productModel.js');
 const bodyParser = require('body-parser');
 const selectString = 'name amount price quantity category';
 
@@ -7,7 +7,7 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({extended: true}));
 
     app.get('/api/products',(req,res)=>{
-        product.find().select(selectString)
+        Product.find().select(selectString)
             .exec()
             .then(
                 docs => {
@@ -21,7 +21,7 @@ module.exports = function (app) {
     });
 
     app.get('/api/products/:name', (req, res) => {
-        product.findOne({name: req.params.name})
+        Product.findOne({name: req.params.name})
             .select(selectString)
             .exec()
             .then(
@@ -43,7 +43,7 @@ module.exports = function (app) {
 
     app.post('/api/product', (req, res) => {
         if (req.body._id) {
-            product.findByIdAndUpdate(req.body._id, {
+            Product.findByIdAndUpdate(req.body._id, {
                 name: req.body.name,
                 price: req.body.price,
                 category: req.body.category
@@ -60,7 +60,7 @@ module.exports = function (app) {
                     });
                 });
         } else {
-            const newProduct = product({
+            const newProduct = new Product({
                 name: req.body.name,
                 price: req.body.price,
                 category: req.body.category
@@ -80,7 +80,7 @@ module.exports = function (app) {
     });
 
     app.delete('/api/product', (req, res) => {
-        product.remove({_id: req.body._id})
+        Product.remove({_id: req.body._id})
             .exec()
             .then(result => {
                 res.status(200).json({

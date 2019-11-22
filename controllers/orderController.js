@@ -1,7 +1,6 @@
-const order = require('../models/orderModel');
+const Order = require('../models/orderModel');
 const bodyParser = require('body-parser');
-const product = require('../models/productModel');
-const selectString = 'product quantity';
+const selectString = 'orderItems';
 
 
 module.exports = function (app) {
@@ -9,26 +8,12 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({extended: true}));
 
     app.get('/api/orders',(req,res)=>{
-        order.find()
+        Order.find()
             .select(selectString)
             .exec()
             .then(docs => {
-                res.status(200).json({
-                    count: docs.length,
-                    orders: docs.map(doc => {
-                        return {
-                            _id: doc._id,
-                            product: doc.product,
-                            quantity: doc.quantity,
-                            request: {
-                                type: 'GET',
-                                url: 'http://localhost:3000/api/order/' + doc._id
-                            }
-                        };
-                    })
-                });
+                res.status(200).json(docs);
             }).catch(err => {
-
             res.status(500).json({
                 error: err
             })
@@ -36,7 +21,7 @@ module.exports = function (app) {
     });
 
     app.get('/api/order/:orderId',function (req,res) {
-        order.findById(req.params.orderId)
+        Order.findById(req.params.orderId)
             .select(selectString)
             .exec()
             .then(order => {
@@ -57,39 +42,24 @@ module.exports = function (app) {
 
 
     app.post('/api/order', (req, res) => {
-        product.findById(req.body.productId)
-            .then(product => {
-                const newOrder = order({
-                    quantity: req.body.quantity,
-                    product: req.body.productId
+        let newOrder = new Order();
+        for(let key in req.body.orderItems){
+            newOrder.orderItems.push({product: req.body.orderItems[key].productId,amount: req.body.orderItems[key].amount});
+        }
+        newOrder.save()
+            .then(
+                res.status(200).json(
+                    {message: 'Order Saved'}
+                ))
+            .catch(err => {
+                res.send(500).json({
+                    error: err
                 });
-                return newOrder.save().catch(err => {
-                    res.status(500).json({
-                        error: err
-                    })
-                });
-            }).then(result => {
-            res.status(200).json({
-                message: 'Order stored',
-                createdOrder: {
-                    _id: result._id,
-                    product: result.product,
-                    quantity: result.quantity
-                },
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:3000/api/order/' + result._id
-                }
             });
-        }).catch(err => {
-            res.status(500).json({
-                error: err
-            });
-        });
     });
 
     app.delete('/api/order/:orderId', (req, res) => {
-        order.remove({_id: req.params.orderId})
+        Order.remove({_id: req.params.orderId})
             .exec()
             .then(result => {
                 res.status(200).json({

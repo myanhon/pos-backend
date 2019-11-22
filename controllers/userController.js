@@ -1,4 +1,4 @@
-const user = require('../models/userModel');
+const User = require('../models/userModel');
 const bodyParser = require('body-parser');
 const selectString = 'name email password role';
 
@@ -7,7 +7,7 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({extended: true}));
 
     app.get('/api/users',(req,res)=>{
-        user.find()
+        User.find()
             .select(selectString)
             .exec()
             .then(docs => {
@@ -21,7 +21,7 @@ module.exports = function (app) {
     });
 
     app.get('/api/users/:email', (req, res) => {
-        user.findOne({email: req.params.email})
+        User.findOne({email: req.params.email})
             .select(selectString)
             .exec()
             .then(
@@ -42,7 +42,7 @@ module.exports = function (app) {
 
     app.post('/api/user', (req, res) => {
         if (req.body._id) {
-            user.findByIdAndUpdate(req.body._id, {
+            User.findByIdAndUpdate(req.body._id, {
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
@@ -59,7 +59,7 @@ module.exports = function (app) {
                 });
             });
         } else {
-            const newUser = user({
+            const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
@@ -73,14 +73,14 @@ module.exports = function (app) {
                 .catch(err => {
                     res.send(500).json({
                         error: err
-                    })
+                    });
                 });
         }
     });
 
 
     app.delete('/api/user', (req, res) => {
-        user.remove({_id: req.body._id}).exec().then(result => {
+        User.remove({_id: req.body._id}).exec().then(result => {
             res.status(200).json({
                 message: 'User deleted'
             });

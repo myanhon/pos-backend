@@ -61,6 +61,10 @@ module.exports = function (app,mongoose) {
         mongoose.connection.collections['products'].drop(() => {
             console.log('products dropped');
         });
+
+        mongoose.connection.collections['orders'].drop(() => {
+            console.log('orders dropped');
+        });
         res.send('Collections Emptied');
     });
 
