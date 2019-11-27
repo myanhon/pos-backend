@@ -1,0 +1,3 @@
+Warning The default server-side session storage, MemoryStore, is purposely not designed for a production environment. It will leak memory under most conditions, does not scale past a single process.
+
+Solution Use Compatible Session Stores such as connect-mongo
