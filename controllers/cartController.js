@@ -17,7 +17,7 @@ module.exports = function (app) {
                     });
                 }
                 let cart = new Cart(req.session.cart ? req.session.cart : {});
-                cart.add(product, product.id);
+                cart.add(product);
                 req.session.cart = cart;
                 console.log(req.session.cart);
                 res.json(req.session.cart);

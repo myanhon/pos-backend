@@ -4,10 +4,11 @@ module.exports = function Cart(oldCart) {
     this.totalQty = oldCart.totalQty || 0;
     this.totalPrice = oldCart.totalPrice || 0;
 
-    this.add = function (item, id) {
-        let storedItem = this.items[id];
+    this.add = function (item) {
+        let storedItem = this.items[item.id];
+        console.log('wtf?' + this.items[item.id]);
         if (!storedItem) {
-            storedItem = this.items[id] = {item: item, qty: 0, price: 0};
+            storedItem = this.items[item.id] = {item: item, qty: 0, price: 0};
         }
         storedItem.qty++;
         storedItem.price = storedItem.item.price * storedItem.qty;
