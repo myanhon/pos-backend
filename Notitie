@@ -1,3 +1,6 @@
 Warning The default server-side session storage, MemoryStore, is purposely not designed for a production environment. It will leak memory under most conditions, does not scale past a single process.
-
 Solution Use Compatible Session Stores such as connect-mongo
+
+res.end: comes from NodeJS core. In Express JS if you need to end request in a quick way and do not need to send any data then you can use this function
+res.send: Sends data and end the request
+res.json Sends data in JSON format and ends the request.

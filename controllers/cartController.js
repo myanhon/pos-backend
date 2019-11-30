@@ -20,7 +20,7 @@ module.exports = function (app) {
                 cart.add(product, product.id);
                 req.session.cart = cart;
                 console.log(req.session.cart);
-                res.status(200).json(req.session.cart);
+                res.json(req.session.cart);
             })
             .catch(err => {
                 res.status(500).json({
@@ -30,4 +30,18 @@ module.exports = function (app) {
 
     });
 
+    app.get('/api/shopping-cart', (req, res) => {
+        if (req.session.cart) {
+            let cart = new Cart(req.session.cart);
+            res.json({
+                products: cart.generateCart(),
+                totalPrice: cart.totalPrice
+            });
+        }
+        else{
+            res.json({
+                products: null
+            });
+        }
+    });
 };
