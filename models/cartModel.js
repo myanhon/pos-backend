@@ -6,7 +6,6 @@ module.exports = function Cart(oldCart) {
 
     this.add = function (item) {
         let storedItem = this.items[item.id];
-        console.log('wtf?' + this.items[item.id]);
         if (!storedItem) {
             storedItem = this.items[item.id] = {item: item, qty: 0, price: 0};
         }

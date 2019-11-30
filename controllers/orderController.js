@@ -1,6 +1,6 @@
 const Order = require('../models/orderModel');
 const bodyParser = require('body-parser');
-const selectString = 'orderItems';
+const selectString = 'user cart';
 
 
 module.exports = function (app) {
@@ -27,10 +27,6 @@ module.exports = function (app) {
             .then(order => {
                 res.status(200).json({
                     order: order,
-                    rquest: {
-                        type: 'GET',
-                        url: 'http://localhost:3000/api/orders'
-                    }
                 });
             })
             .catch(err => {
@@ -42,17 +38,18 @@ module.exports = function (app) {
 
 
     app.post('/api/order', (req, res) => {
-        let newOrder = new Order();
-        for(let key in req.body.orderItems){
-            newOrder.orderItems.push({product: req.body.orderItems[key].productId,amount: req.body.orderItems[key].amount});
-        }
+        let newOrder = new Order({
+            user: req.user,
+            cart: req.session.cart
+        });
+
         newOrder.save()
-            .then(
-                res.status(200).json(
-                    {message: 'Order Saved'}
-                ))
+            .then(()=>{
+                res.status(200).json({message: 'Order Saved'});
+                // res.session.cart = null;
+            })
             .catch(err => {
-                res.send(500).json({
+                res.json({
                     error: err
                 });
             });
