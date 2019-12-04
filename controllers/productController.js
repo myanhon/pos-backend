@@ -1,6 +1,6 @@
 const Product = require('../models/productModel.js');
 const bodyParser = require('body-parser');
-const selectString = 'name amount price quantity category';
+const selectString = 'name amount price size category';
 
 module.exports = function (app) {
     app.use(bodyParser.json());

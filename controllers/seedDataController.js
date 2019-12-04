@@ -11,29 +11,29 @@ let seedUsersData = [
         name: 'Noella',
         email: 'abc@gmail.com',
         password: 'abc123',
-        role: 'schoonmaker'
+        role: 'Worker'
     }
 ];
 
 
 let seedProductsData = [
     {
-        name: 'Pork',
-        amount: 5,
+        name: 'Fish Cutlet',
         price: 12,
-        category:  'meat'
+        size: "Medium",
+        category:  'Fish'
     },
     {
-        name: 'Brocolli',
-        amount: 5,
+        name: 'Sate ku Batata',
         price: 14,
-        category:  'vegetable'
+        size: "Large",
+        category:  'Meat'
     },
     {
-        name: 'Carrot',
-        amount: 5,
+        name: 'Coco Cola',
         price: 15,
-        category: 'vegetable'
+        amount: 5,
+        category: 'Cold Drinks'
     }
 ];
 
