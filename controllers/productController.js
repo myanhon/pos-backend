@@ -1,10 +1,7 @@
 const Product = require('../models/productModel.js');
-const bodyParser = require('body-parser');
 const selectString = 'name amount price size category';
 
 module.exports = function (app) {
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
 
     app.get('/api/products',(req,res)=>{
         Product.find().select(selectString)
@@ -41,11 +38,14 @@ module.exports = function (app) {
             });
     });
 
+
     app.post('/api/product', (req, res) => {
         if (req.body._id) {
             Product.findByIdAndUpdate(req.body._id, {
                 name: req.body.name,
+                amount:req.body.amount,
                 price: req.body.price,
+                size:req.body.size,
                 category: req.body.category
             })
                 .exec()
@@ -62,7 +62,9 @@ module.exports = function (app) {
         } else {
             const newProduct = new Product({
                 name: req.body.name,
+                amount:req.body.amount,
                 price: req.body.price,
+                size:req.body.size,
                 category: req.body.category
             });
             newProduct.save()

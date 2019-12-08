@@ -32,8 +32,12 @@ let seedProductsData = [
     {
         name: 'Coco Cola',
         price: 15,
-        amount: 5,
+        size: "Large",
         category: 'Cold Drinks'
+    },   {
+        name: 'Glou Glou',
+        price: 15,
+        category: 'Wine'
     }
 ];
 

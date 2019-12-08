@@ -1,12 +1,9 @@
 const Order = require('../models/orderModel');
-const bodyParser = require('body-parser');
+
 const selectString = 'user cart';
 
 
 module.exports = function (app) {
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
-
     app.get('/api/orders',(req,res)=>{
         Order.find()
             .select(selectString)

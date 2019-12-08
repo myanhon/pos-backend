@@ -1,12 +1,8 @@
 const Cart = require('../models/cartModel');
 const Product = require('../models/productModel');
-const bodyParser = require('body-parser');
 const selectString = 'name amount price quantity category';
 
 module.exports = function (app) {
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
-
     app.get('/api/add-to-cart/:id', (req, res) => {
         Product.findById(req.params.id)
             .select(selectString)
