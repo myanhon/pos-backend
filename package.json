@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js",
-    "devStartAuth": "nodemon authServer.js",
+    "ds": "nodemon server.js",
+    "dsa": "nodemon authServer.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js"
   },
@@ -15,15 +15,20 @@
     "dotenv": "^8.0.0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "connect-mongo": "^3.1.2",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-flash": "0.0.2",
     "express-session": "^1.17.0",
+    "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.14",
     "mongoose-unique-validator": "^2.0.3",
-    "nodejs": "0.0.0"
+    "nodejs": "0.0.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
   }
 }

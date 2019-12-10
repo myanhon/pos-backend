@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./config/passport-config.js');
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -13,8 +14,11 @@ const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session); // instead of default MemoryStorage of the server
 const port = process.env.PORT || 3000;
 const cors = require('cors');
+const flash = require('express-flash');
+const passport = require('passport');
 
 app.use(cookieParser());
+app.use(express.urlencoded({extended: false}));
 app.use(cors());
 app.use(express.json());
 
@@ -37,15 +41,18 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+app.use(flash());
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
+    resave: false, // Should we resave our session variables if nothing has changed
+    saveUninitialized: false, // Do you want to save empty values?
     store: new MongoStore({
     mongooseConnection: mongoose.connection // use existed mongoose connection instead of a new one
     }),
     cookie: {maxAge: 180 * 60 * 1000} //How long a session should live
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
 

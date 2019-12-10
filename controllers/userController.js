@@ -1,10 +1,9 @@
 const User = require('../models/userModel');
 const selectString = 'name email password role';
 const jwt = require('jsonwebtoken');
-
+const passport = require('passport');
 
 module.exports = function (app) {
-
     app.get('/users', (req, res) => {
         User.find()
             .select(selectString)
@@ -91,16 +90,45 @@ module.exports = function (app) {
     });
 
 
-    app.get('/user/signup', (req, res) => {
-        // const token = req.csrfToken();
-        // console.log('user signup', {csrfToken: token});
-        // return res.json({csrfToken: token});
+
+
+    app.post('/user/register', function (req, res, next) {
+         passport.authenticate('local.register', function (err, passportUser, info) {
+            if (err) return res.json({error: info.message});
+            if (!passportUser) return res.json({message: info.message});
+             return res.end();
+        })(req, res, next);
     });
 
 
-    app.post('/user/signup', authenticateToken, (req, res) => {
-        res.send('jwt was required to get here');
-    });
+    //
+    // app.post('/user/register', async (req, res) => {
+    //     try {
+    //         const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    //         const newUser = new User({
+    //             name: req.body.name,
+    //             email: req.body.email,
+    //             password: hashedPassword,
+    //             role: req.body.role
+    //         });
+    //         newUser.save()
+    //             .then(
+    //                 res.status(200).json({
+    //                     message: 'User saved',
+    //                     user:newUser
+    //                 }))
+    //             .catch(err => {
+    //                 res.send(500).json({
+    //                     error: err
+    //                 });
+    //             });
+    //     } catch (err) {
+    //         res.send(500).json({
+    //             error: err
+    //         })
+    //     }
+    //     //  res.send('jwt was required to get here');
+    // });
 
 
     function authenticateToken(req, res, next) {
