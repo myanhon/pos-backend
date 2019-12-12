@@ -1,7 +1,6 @@
 const passport = require('passport');
 const User = require('../models/userModel');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcryptjs');
 
 //Store User in Session
 passport.serializeUser((user, done) => {
@@ -21,25 +20,39 @@ passport.use('local.register', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
-}, async (req, email, password, done) =>{
-
-   await User.findOne({email: email}, function (err, user) {
+}, (req, email, password, done) => {
+    User.findOne({email: email}, (err, user) => {
         if (err) return done(err);
         if (user) {
-            return done(null, false, {message: 'Email is already in use'})
-        }else {
+            return done(null, false, {message: 'Email is already in use.'})
+        } else {
             const newUser = new User();
             newUser.email = email;
             newUser.password = newUser.encryptPassword(password);
-            newUser.save(function (err, result) {
-                if (err) return done(err);
-                return done(null, newUser);
-            });
+            newUser.save(err => {
+                    if (err) return done(err);
+                    return done(null, newUser);
+                }
+            );
         }
     });
 }));
 
-
+passport.use('local.login', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+}, (req, email, password, done) => {
+    User.findOne({email: email}, (err, user) => {
+        if (err) return done(err);
+        if (!user) {
+            return done(null, false, {message: 'No user found.'})
+        } else if (!user.validPassword(password)) {
+            return done(null, false, {message: 'Wrong password.'})
+        }
+        return done(null, user);
+    });
+}));
 
 //  function initialize(passport, getUserByEmail) {
 //     const authenticateUser = async (email, password, done) => {

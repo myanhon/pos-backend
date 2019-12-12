@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const selectString = 'name email password role';
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const { check, validationResult } = require('express-validator');
 
 module.exports = function (app) {
     app.get('/users', (req, res) => {
@@ -90,16 +91,28 @@ module.exports = function (app) {
     });
 
 
+    app.post('/user/register', check('email', 'Invalid email').notEmpty().isEmail(),
+        check('password', 'Invalid password').notEmpty().isLength({min: 4}),
+        (req, res, next) => {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                const errorMsgs = [];
+                errors.array().forEach(error => {
+                    errorMsgs.push(error.msg);
+                });
+                return res.status(422).json({error: errorMsgs});
+            }
+            passport.authenticate('local.register', async (err, passportUser, info) => {
+                    if (!passportUser) return res.json({error: info.message});
+                    await res.sendStatus(200);
+                }
+            )(req, res, next);
+        });
+
+    app.post('/user/login', passport.authenticate('local.login'), (req, rex, next) => {
 
 
-    app.post('/user/register', function (req, res, next) {
-         passport.authenticate('local.register', function (err, passportUser, info) {
-            if (err) return res.json({error: info.message});
-            if (!passportUser) return res.json({message: info.message});
-             return res.end();
-        })(req, res, next);
     });
-
 
     //
     // app.post('/user/register', async (req, res) => {

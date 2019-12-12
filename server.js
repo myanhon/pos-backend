@@ -61,6 +61,6 @@ userController(app);
 orderController(app);
 cartController(app);
 if(process.env.ENV === "DEV"){
-    seedDataController(app,mongoose);
+    seedDataController(app);
 }
 app.listen(port);

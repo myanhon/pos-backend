@@ -1,16 +1,17 @@
 const user = require('../models/userModel');
 const product = require('../models/productModel');
-
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 let seedUsersData = [
     {
         name: 'Mike',
         email: 'test@gmail.com',
-        password: 'test123',
+        password:  bcrypt.hashSync('test', 10),
         role: 'admin'
     }, {
         name: 'Noella',
         email: 'abc@gmail.com',
-        password: 'abc123',
+        password:  bcrypt.hashSync('test', 10),
         role: 'Worker'
     }
 ];
@@ -41,7 +42,7 @@ let seedProductsData = [
     }
 ];
 
-module.exports = function (app,mongoose) {
+module.exports = function (app) {
 
     app.get('/api/seedData', function (req, res) {
 
