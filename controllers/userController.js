@@ -91,10 +91,10 @@ module.exports = function (app) {
 
 
 
-    app.post('/user/login', passport.authenticate('local.login'), (req, rex, next) => {
-
-
-    });
+    // app.post('/user/login', passport.authenticate('local.login'), (req, rex, next) => {
+    //
+    //
+    // });
 
     //
     // app.post('/user/register', async (req, res) => {
@@ -125,17 +125,5 @@ module.exports = function (app) {
     //     //  res.send('jwt was required to get here');
     // });
 
-
-    function authenticateToken(req, res, next) {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1]; //if we have a authHeader then return authHeader[1]
-        if (token == null) return res.sendStatus(401);
-
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (err) return res.sendStatus(403);
-            req.user = user;
-            next()
-        });
-    }
 
 };

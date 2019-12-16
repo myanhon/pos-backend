@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./config/passport-config.js');
+const authenticateToken = require('./controllers/authenticateTokenController');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const passport = require('passport');
@@ -20,7 +21,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15s'});
 }
 
 let refreshTokens = []; //not for production
@@ -32,7 +33,6 @@ app.post('/login', (req, res) => {
     //Same User
     const accessToken = generateAccessToken(user);
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-    console.log('pushed', refreshToken);
     refreshTokens.push(refreshToken);
     res.json({accessToken: accessToken, refreshToken: refreshToken});
 });
@@ -70,9 +70,14 @@ app.post('/refreshToken', (req, res) => {
     });
 });
 
+app.post('/verify',authenticateToken, (req, res, next) => {
+    res.send('needed jwt to come here');
+    next();
+});
+
 
 app.delete('/logout', (req, res) => {
-    refreshTokens =  refreshTokens.filter(token => token !== req.body.token);
+    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
     res.sendStatus(204);
 });
 
