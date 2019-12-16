@@ -70,9 +70,8 @@ app.post('/refreshToken', (req, res) => {
     });
 });
 
-app.post('/verify',authenticateToken, (req, res, next) => {
-    res.send('needed jwt to come here');
-    next();
+app.post('/verify',authenticateToken, (req, res) => {
+    res.sendStatus(200);
 });
 
 
