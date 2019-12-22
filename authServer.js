@@ -42,13 +42,13 @@ app.post('/register', check('email', 'Invalid email').notEmpty().isEmail(),
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const errorMsgs = [];
-            errors.array().forEach(error => {
+            errors.array({onlyFirstError: true}).forEach(error => {
                 errorMsgs.push(error.msg);
             });
-            return res.status(422).json({error: errorMsgs});
+            return res.status(422).json({message: errorMsgs});
         }
         passport.authenticate('local.register',   (err, passportUser, info) => {
-            if (!passportUser) return res.json({error: info.message});
+            if (!passportUser) return res.json({message: info.message});
             const user =  {email: passportUser.email};
             const accessToken =  generateAccessToken(user);
             //Same User
