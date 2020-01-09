@@ -10,6 +10,7 @@ const config = require('./config/config');
 const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
+const User = require('./models/userModel');
 const port = process.env.PORT || 4000;
 
 app.use(cookieParser());
@@ -37,7 +38,13 @@ app.post('/login', (req, res) => {
     res.json({accessToken: accessToken, refreshToken: refreshToken});
 });
 
-app.post('/register', check('email', 'Invalid email').notEmpty().isEmail(),
+app.post('/register', check('email', 'Invalid email').notEmpty().isEmail().custom((email =>{
+        return User.findOne({email:email}).then(user => {
+            if (user) {
+                return Promise.reject('Email already in use');
+            }
+        });
+    })),
     check('password', 'Invalid password').notEmpty().isLength({min: 4}), (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -47,12 +54,12 @@ app.post('/register', check('email', 'Invalid email').notEmpty().isEmail(),
             });
             return res.status(422).json({message: errorMsgs});
         }
-        passport.authenticate('local.register',   (err, passportUser, info) => {
+        passport.authenticate('local.register', (err, passportUser, info) => {
             if (!passportUser) return res.json({message: info.message});
-            const user =  {email: passportUser.email};
-            const accessToken =  generateAccessToken(user);
+            const user = {email: passportUser.email};
+            const accessToken = generateAccessToken(user);
             //Same User
-            const refreshToken =  jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+            const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
             refreshTokens.push(refreshToken);
             res.json({accessToken: accessToken, refreshToken: refreshToken});
             next();
