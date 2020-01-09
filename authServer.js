@@ -26,19 +26,36 @@ function generateAccessToken(user) {
 }
 
 let refreshTokens = []; //not for production
-app.post('/login', (req, res) => {
-    //Authenticate User
-    const email = req.body.email;
-    const user = {email: email};
+app.post('/login',
+    check('email', 'Invalid email').notEmpty().isEmail(),
+    check('password', 'Invalid password').notEmpty(), (req, res, next) => {
 
-    //Same User
-    const accessToken = generateAccessToken(user);
-    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-    refreshTokens.push(refreshToken);
-    res.json({accessToken: accessToken, refreshToken: refreshToken});
-});
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errorMsgs = [];
+            errors.array({onlyFirstError: true}).forEach(error => {
+                errorMsgs.push(error.msg);
+            });
+            return res.status(422).json({message: errorMsgs});
+        }
 
-app.post('/register', check('email', 'Invalid email').notEmpty().isEmail().custom((email =>{
+        passport.authenticate('local.login', (err, passportUser, info) => {
+            if (!passportUser) return res.status(400).json({message: info.message});
+            //Authenticate User
+            const email = req.body.email;
+            const user = {email: email};
+
+            //Same User
+            const accessToken = generateAccessToken(user);
+            const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+            refreshTokens.push(refreshToken);
+            res.json({accessToken: accessToken, refreshToken: refreshToken});
+            next();
+        })(req, res, next);
+    });
+
+app.post('/register',
+    check('email', 'Invalid email').notEmpty().isEmail().custom((email =>{
         return User.findOne({email:email}).then(user => {
             if (user) {
                 return Promise.reject('Email already in use');
@@ -55,7 +72,7 @@ app.post('/register', check('email', 'Invalid email').notEmpty().isEmail().custo
             return res.status(422).json({message: errorMsgs});
         }
         passport.authenticate('local.register', (err, passportUser, info) => {
-            if (!passportUser) return res.json({message: info.message});
+            if (!passportUser) return res.status(400).json({message: info.message});
             const user = {email: passportUser.email};
             const accessToken = generateAccessToken(user);
             //Same User
