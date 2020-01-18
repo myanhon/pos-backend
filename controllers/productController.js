@@ -1,5 +1,5 @@
 const Product = require('../models/productModel.js');
-const selectString = 'name amount price size category';
+const selectString = 'name amount price size category url';
 
 module.exports = function (app) {
 

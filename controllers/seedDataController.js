@@ -31,10 +31,11 @@ let seedProductsData = [
         category:  'Meat'
     },
     {
-        name: 'Coco Cola',
+        name: 'Coca Cola',
         price: 15,
         size: "Large",
-        category: 'Cold Drinks'
+        category: 'Cold Drinks',
+        url:'coca-cola.jpg'
     },   {
         name: 'Glou Glou',
         price: 15,
