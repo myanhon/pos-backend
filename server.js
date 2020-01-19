@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTION');
@@ -44,6 +44,7 @@ app.use(function (req, res, next) {
 app.use(flash());
 app.use(session({
     secret: process.env.SESSION_SECRET,
+    httpOnly: true, // dont let browser javascript access cookie ever
     resave: false, // Should we resave our session variables if nothing has changed
     saveUninitialized: false, // Do you want to save empty values?
     store: new MongoStore({
@@ -53,6 +54,12 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+//check cookie from request
+app.use(function (req, res, next) {
+    console.log('Cookie from request',req.cookies);
+    next();
+});
 
 mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
 
