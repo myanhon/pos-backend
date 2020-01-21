@@ -55,12 +55,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//check cookie from request
-app.use(function (req, res, next) {
-    console.log('Cookie from request',req.cookies);
-    next();
-});
+// //check cookie from request
+// app.use(function (req, res, next) {
+//     console.log('Cookie from request',req.cookies);
+//     next();
+// });
 
+app.use(function (req, res, next) {
+    res.locals.session = req.session;
+    next();
+
+});
 mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
 
 productController(app);
