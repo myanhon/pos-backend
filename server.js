@@ -9,7 +9,9 @@ const productController = require('./controllers/productController');
 const userController = require('./controllers/userController');
 const orderController = require('./controllers/orderController');
 const cartController = require('./controllers/cartController');
+const checkOutController = require('./controllers/checkoutController');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session); // instead of default MemoryStorage of the server
 const port = process.env.PORT || 3000;
@@ -18,10 +20,11 @@ const flash = require('express-flash');
 const passport = require('passport');
 
 app.use(cookieParser());
-app.use(express.urlencoded({extended: false}));
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(bodyParser.json());
 // Add headers
 app.use(function (req, res, next) {
 
@@ -57,7 +60,7 @@ app.use(passport.session());
 
 // //check cookie from request
 // app.use(function (req, res, next) {
-//     console.log('Cookie from request',req.cookies);
+//     console.log('cart from request',req.session.cart);
 //     next();
 // });
 
@@ -72,7 +75,9 @@ productController(app);
 userController(app);
 orderController(app);
 cartController(app);
+checkOutController(app);
 if(process.env.ENV === "DEV"){
     seedDataController(app);
 }
 app.listen(port);
+console.log('Api server running on port:', port);

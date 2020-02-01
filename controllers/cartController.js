@@ -31,7 +31,7 @@ module.exports = function (app) {
 
     app.get('/api/shopping-cart', (req, res) => {
         if (req.session.cart) {
-            let cart = new Cart(req.session.cart);
+            const cart = new Cart(req.session.cart);
             res.json({
                 products: cart.generateCart(),
                 totalPrice: cart.totalPrice
