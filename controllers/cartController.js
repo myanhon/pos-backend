@@ -15,10 +15,6 @@ module.exports = function (app) {
                 let cart = new Cart(req.session.cart ? req.session.cart : {});
                 cart.add(product);
                 req.session.cart = cart;
-
-                //for demonstration
-                console.log('req.session:', req.session.cart);
-                // res.json(req.session.cart);
                 res.sendStatus(200);
             })
             .catch(err => {

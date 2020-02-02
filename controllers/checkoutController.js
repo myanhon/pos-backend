@@ -1,5 +1,6 @@
 const Cart = require('../models/cartModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
+const Order = require('../models/orderModel');
 module.exports = function (app) {
     app.get('/api/checkout', (req, res) => {
         if (!req.session.cart ) {
@@ -14,6 +15,7 @@ module.exports = function (app) {
     });
 
     app.post('/api/checkout', (req, res) => {
+        console.log('rektt bodyy', req.body);
         if (!req.session.cart) {
             res.json({
                 message: "Cart is Empty"
@@ -26,17 +28,28 @@ module.exports = function (app) {
                 amount: cart.totalPrice * 100,
                 currency: "USD",
                 description: 'Example charge',
-                source: req.body,
-            }).then(() => {
-                console.log('Successfully bought product!');
-                req.session.cart = null;
-                res.status(200).json({
-                    message: 'Successfully bought product!'
+                source: req.body.stripeToken,
+            }).then( charge => {
+
+                const order = new Order({
+                    //req.user through passport
+                    user: req.user,
+                    cart: cart,
+                    name: req.body.name,
+                    paymentId: charge.id
+                });
+
+                order.save().then(() => {
+                    console.log('we zijn binnen', order);
+                    req.session.cart = null;
+                    res.status(200).json({
+                        message: 'Successfully bought product!'
+                    });
                 });
             }).catch(error => {
-                console.log("error g:", error);
+                console.log("error:", error.message);
                 return res.status(500).json({
-                    error: error
+                    error: error.message
                 })
             });
         }

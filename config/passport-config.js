@@ -2,17 +2,19 @@ const passport = require('passport');
 const User = require('../models/userModel');
 const LocalStrategy = require('passport-local').Strategy;
 
+//TODO can't get req.user
 //Store User in Session
 passport.serializeUser((user, done) => {
-    done(null, user._id);
-});
+    console.log('serializegeng', user);
+    done(null, user.id);
+    }
+);
 
 // Store ID in Session
 passport.deserializeUser((id, done) => {
-    User.findById({
-        id, function(err, user) {
-            done(err, user);
-        }
+    console.log('whos id is this:', id);
+    User.findById(id).then(user => {
+        done(null, user.id)
     })
 });
 
@@ -52,28 +54,7 @@ passport.use('local.login', new LocalStrategy({
             return done(null, false, {message: 'Wrong password'});
 
         }
+        console.log('current user HALLO?', user);
         return done(null, user);
     });
 }));
-
-//  function initialize(passport, getUserByEmail) {
-//     const authenticateUser = async (email, password, done) => {
-//         const user = getUserByEmail(email);
-//         if (user == null) return done(null, false, {message: 'No User with that email'});
-//         console.log('user :',user);
-//         console.log('user password:',user.password);
-//         try {
-//             if (await bcrypt.compare(password, user.password)) {
-//                 return done(null, user)
-//             } else return done(null, false, {message: 'Password incorrect'});
-//
-//         } catch (err) {
-//             return done(err)
-//         }
-//     };
-//     passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser));
-//     passport.serializeUser((user, done) => {
-//     });
-//     passport.deserializeUser((id, done) => {
-//     });
-// }

@@ -15,13 +15,10 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session); // instead of default MemoryStorage of the server
 const port = process.env.PORT || 3000;
-const cors = require('cors');
-const flash = require('express-flash');
 const passport = require('passport');
 
 app.use(cookieParser());
-app.use(cors());
-app.use(express.text());
+app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
@@ -44,7 +41,7 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-app.use(flash());
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     httpOnly: true, // dont let browser javascript access cookie ever
@@ -58,14 +55,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// //check cookie from request
-// app.use(function (req, res, next) {
-//     console.log('cart from request',req.session.cart);
-//     next();
-// });
+//check cookie from request
+app.use(function (req, res, next) {
+    console.log('check user',req.user);
+    next();
+});
 
 app.use(function (req, res, next) {
-    res.locals.session = req.session;
+    res.locals.user = req.user;
     next();
 
 });
@@ -80,4 +77,3 @@ if(process.env.ENV === "DEV"){
     seedDataController(app);
 }
 app.listen(port);
-console.log('Api server running on port:', port);
