@@ -2,7 +2,6 @@ require('dotenv').config();
 require('./config/passport-config.js');
 const authenticateToken = require('./controllers/authenticateTokenController');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
@@ -11,12 +10,41 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 const User = require('./models/userModel');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session); // instead of default MemoryStorage of the server
 const port = process.env.PORT || 4000;
 
 app.use(cookieParser());
 app.use(express.urlencoded({extended: false}));
-app.use(cors());
 app.use(express.json());
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTION');
+
+    // Request headers you wish to allow
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    httpOnly: true, // dont let browser javascript access cookie ever
+    resave: false, // Should we resave our session variables if nothing has changed
+    saveUninitialized: false, // Do you want to save empty values?
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection // use existed mongoose connection instead of a new one
+    }),
+    cookie: {maxAge: 180 * 60 * 1000} //How long a session should live
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -48,9 +76,13 @@ app.post('/login',
             //Same User
             const accessToken = generateAccessToken(user);
             const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-            refreshTokens.push(refreshToken);
-            res.json({accessToken: accessToken, refreshToken: refreshToken});
-            next();
+            req.login(passportUser, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+                res.json({accessToken: accessToken, refreshToken: refreshToken});
+                next();
+            });
         })(req, res, next);
     });
 

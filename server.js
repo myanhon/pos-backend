@@ -55,11 +55,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//check cookie from request
-app.use(function (req, res, next) {
-    console.log('check user',req.user);
-    next();
-});
+// //check cookie from request
+// app.use(function (req, res, next) {
+//     console.log('check user',req.user);
+//     next();
+// });
 
 app.use(function (req, res, next) {
     res.locals.user = req.user;

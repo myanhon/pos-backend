@@ -15,7 +15,6 @@ module.exports = function (app) {
     });
 
     app.post('/api/checkout', (req, res) => {
-        console.log('rektt bodyy', req.body);
         if (!req.session.cart) {
             res.json({
                 message: "Cart is Empty"

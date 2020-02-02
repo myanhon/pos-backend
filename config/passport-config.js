@@ -12,7 +12,6 @@ passport.serializeUser((user, done) => {
 
 // Store ID in Session
 passport.deserializeUser((id, done) => {
-    console.log('whos id is this:', id);
     User.findById(id).then(user => {
         done(null, user.id)
     })
@@ -54,7 +53,6 @@ passport.use('local.login', new LocalStrategy({
             return done(null, false, {message: 'Wrong password'});
 
         }
-        console.log('current user HALLO?', user);
         return done(null, user);
     });
 }));
