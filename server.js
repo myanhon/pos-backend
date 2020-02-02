@@ -21,10 +21,10 @@ const passport = require('passport');
 
 app.use(cookieParser());
 app.use(cors());
-app.use(express.json());
+app.use(express.text());
 app.use(bodyParser.urlencoded({extended: true}));
-
 app.use(bodyParser.json());
+
 // Add headers
 app.use(function (req, res, next) {
 

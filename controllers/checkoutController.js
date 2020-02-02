@@ -17,7 +17,7 @@ module.exports = function (app) {
         })
     });
 
-    app.get('/api/checkout/:id', (req, res) => {
+    app.post('/api/checkout', (req, res) => {
         if (!req.session.cart) {
             //should redirect
             console.log('geen cart huh?');
@@ -30,7 +30,7 @@ module.exports = function (app) {
             amount: cart.totalPrice*100,
             currency: "USD",
             description: 'Example charge',
-            source: req.params.id,
+            source:req.body,
         }).then(() => {
             console.log('Successfully bought product!');
             req.session.cart = null;
@@ -38,7 +38,7 @@ module.exports = function (app) {
                 message: 'Successfully bought product!'
             });
         }).catch(error => {
-            console.log(error);
+            // console.log("error g:", error);
             return res.status(500).json({
                 error: error
             })
