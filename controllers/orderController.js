@@ -3,7 +3,7 @@ const selectString = 'user cart name paymentId ';
 
 
 module.exports = function (app) {
-    app.get('/api/orders',(req,res)=>{
+    app.get('/orders',(req,res)=>{
         Order.find()
             .select(selectString)
             .exec()
@@ -16,7 +16,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/api/order/:orderId',function (req,res) {
+    app.get('/order/:orderId',function (req,res) {
         Order.findById(req.params.orderId)
             .select(selectString)
             .exec()
@@ -33,7 +33,7 @@ module.exports = function (app) {
     });
 
 
-    app.post('/api/order', (req, res) => {
+    app.post('/order', (req, res) => {
         let newOrder = new Order({
             user: req.user,
             cart: req.session.cart
@@ -51,7 +51,7 @@ module.exports = function (app) {
             });
     });
 
-    app.delete('/api/order/:orderId', (req, res) => {
+    app.delete('/order/:orderId', (req, res) => {
         Order.remove({_id: req.params.orderId})
             .exec()
             .then(result => {
@@ -59,7 +59,7 @@ module.exports = function (app) {
                     message: 'Order Deleted',
                     request: {
                         type: 'POST',
-                        url: 'http://localhost:3000/api/orders',
+                        url: 'http://localhost:3000/orders',
                         body: {
                             productId: "ID",
                             quantity: "Number"

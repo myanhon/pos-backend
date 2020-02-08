@@ -2,7 +2,7 @@ const Cart = require('../models/cartModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const Order = require('../models/orderModel');
 module.exports = function (app) {
-    app.get('/api/checkout', (req, res) => {
+    app.get('/checkout', (req, res) => {
         if (!req.session.cart ) {
             res.json({
                 isActive: false
@@ -14,7 +14,8 @@ module.exports = function (app) {
         }
     });
 
-    app.post('/api/checkout', (req, res) => {
+    app.post('/checkout',(req, res) => {
+        console.log("req url: ", req.url);
         if (!req.session.cart) {
             res.json({
                 message: "Cart is Empty"

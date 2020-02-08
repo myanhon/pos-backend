@@ -3,7 +3,7 @@ const Product = require('../models/productModel');
 const selectString = 'name amount price quantity category';
 
 module.exports = function (app) {
-    app.get('/api/add-to-cart/:id', (req, res) => {
+    app.get('/add-to-cart/:id', (req, res) => {
         Product.findById(req.params.id)
             .select(selectString)
             .then(product => {
@@ -25,7 +25,7 @@ module.exports = function (app) {
 
     });
 
-    app.get('/api/shopping-cart', (req, res) => {
+    app.get('/shopping-cart', (req, res) => {
         if (req.session.cart) {
             const cart = new Cart(req.session.cart);
             res.json({

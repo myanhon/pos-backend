@@ -53,7 +53,7 @@ let seedProductsData = [
 
 module.exports = function (app) {
 
-    app.get('/api/seedData', function (req, res) {
+    app.get('/seedData', function (req, res) {
 
         user.create(seedUsersData, function (err, results) {
             if (err) throw err;
@@ -65,7 +65,7 @@ module.exports = function (app) {
         res.sendStatus(200);
     });
 
-    app.get('/api/deleteSeed', function (req, res) {
+    app.get('/deleteSeed', function (req, res) {
 
         mongoose.connection.collections['users'].drop(() => {
             console.log('users dropped');

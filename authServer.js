@@ -131,9 +131,11 @@ app.post('/verify',authenticateToken, (req, res) => {
 });
 
 
-app.delete('/logout', (req, res) => {
-    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
-    res.sendStatus(204);
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.sendStatus(200);
+    // refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
+    // res.sendStatus(204);
 });
 
 mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});

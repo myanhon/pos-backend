@@ -3,7 +3,7 @@ const selectString = 'name amount price size category url';
 
 module.exports = function (app) {
 
-    app.get('/api/products',(req,res)=>{
+    app.get('/products',(req,res)=>{
         Product.find().select(selectString)
             .exec()
             .then(
@@ -17,7 +17,7 @@ module.exports = function (app) {
             });
     });
 
-    app.get('/api/products/:name', (req, res) => {
+    app.get('/products/:name', (req, res) => {
         Product.findOne({name: req.params.name})
             .select(selectString)
             .exec()
@@ -39,7 +39,7 @@ module.exports = function (app) {
     });
 
 
-    app.post('/api/product', (req, res) => {
+    app.post('/product', (req, res) => {
         if (req.body._id) {
             Product.findByIdAndUpdate(req.body._id, {
                 name: req.body.name,
@@ -81,7 +81,7 @@ module.exports = function (app) {
         }
     });
 
-    app.delete('/api/product', (req, res) => {
+    app.delete('/product', (req, res) => {
         Product.remove({_id: req.body._id})
             .exec()
             .then(result => {
