@@ -5,17 +5,21 @@ const LocalStrategy = require('passport-local').Strategy;
 //TODO can't get req.user
 //Store User in Session
 passport.serializeUser((user, done) => {
-    console.log('Serliazed User!');
+    console.log('Serliazed User!', user.id);
     done(null, user.id);
     }
 );
 
 // Store ID in Session
 passport.deserializeUser((id, done) => {
-    console.log('Desliazed User!');
-    User.findById(id).then(user => {
-        done(null, user.id)
-    })
+    console.log('Deserialze User!',id);
+        User.findById(id).then(user => {
+            done(null, user.id)
+        }).catch(error =>{
+            console.log(error);
+        });
+
+
 });
 
 passport.use('local.register', new LocalStrategy({
