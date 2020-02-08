@@ -1,6 +1,8 @@
 const User = require('../models/userModel');
 const selectString = 'name email password role';
-const jwt = require('jsonwebtoken');
+const Order = require('../models/orderModel');
+const Cart = require('../models/cartModel');
+// const jwt = require('jsonwebtoken');
 
 module.exports = function (app) {
     app.get('/users', (req, res) => {
@@ -15,6 +17,25 @@ module.exports = function (app) {
                     error: err
                 });
             });
+    });
+
+    app.get('/users/profile', (req, res, next) => {
+        console.log("current user order:", req.user);
+        Order.find({user: req.user})
+            .then(orders =>{
+                orders.forEach(order => {
+                    const cart = new Cart(order.cart);
+                    order.items = cart.generateCart();
+                });
+                res.status(200).json({
+                    orders: orders
+                })
+            })
+            .catch(error=>{
+                res.status(500).json({
+                    error: error
+                })
+            })
     });
 
     app.get('/users/:email', (req, res) => {
