@@ -22,7 +22,22 @@ module.exports = function (app) {
                     error: err
                 });
             });
+    });
 
+    app.get('/reduce-one-from-cart/:id',(req,res) =>{
+        const productId = req.params.id;
+        const cart = new Cart(req.session.cart ? req.session.cart : {});
+        cart.reduceByOne(productId);
+        req.session.cart = cart;
+        res.sendStatus(200);
+    });
+
+    app.get('/remove-from-cart/:id',(req,res) =>{
+        const productId = req.params.id;
+        const cart = new Cart(req.session.cart ? req.session.cart : {});
+        cart.removeItem(productId);
+        req.session.cart = cart;
+        res.sendStatus(200);
     });
 
     app.get('/shopping-cart', (req, res) => {

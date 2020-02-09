@@ -57,14 +57,13 @@ app.use(passport.session());
 
 // //check cookie from request
 // app.use(function (req, res, next) {
-//     console.log('check user',req.user);
+//     console.log('check userx',req.user);
 //     next();
 // });
 
 app.use(function (req, res, next) {
     res.locals.user = req.user;
     next();
-
 });
 mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
 

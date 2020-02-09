@@ -15,7 +15,6 @@ module.exports = function (app) {
     });
 
     app.post('/checkout',(req, res) => {
-        console.log("req url: ", req.url);
         if (!req.session.cart) {
             res.json({
                 message: "Cart is Empty"
@@ -30,17 +29,15 @@ module.exports = function (app) {
                 description: 'Example charge',
                 source: req.body.stripeToken,
             }).then( charge => {
-
                 const order = new Order({
                     //req.user through passport
-                    user: req.user,
+                    user: req.user._id,
                     cart: cart,
-                    name: req.body.name,
+                    name: req.user.name,
                     paymentId: charge.id
                 });
 
                 order.save().then(() => {
-                    console.log('we zijn binnen', order);
                     req.session.cart = null;
                     res.status(200).json({
                         message: 'Successfully bought product!'

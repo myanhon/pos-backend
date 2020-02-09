@@ -35,7 +35,7 @@ module.exports = function (app) {
 
     app.post('/order', (req, res) => {
         let newOrder = new Order({
-            user: req.user,
+            user: req.user._id,
             cart: req.session.cart
         });
 

@@ -50,7 +50,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15s'});
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
 }
 
 let refreshTokens = []; //not for production
@@ -136,11 +136,10 @@ app.post('/verify',authenticateToken, (req, res) => {
 });
 
 
-app.get('/logout', (req, res) => {
+app.delete('/logout', (req, res) => {
     req.logout();
-    res.sendStatus(200);
-    // refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
-    // res.sendStatus(204);
+    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
+    res.sendStatus(204);
 });
 
 mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
