@@ -72,7 +72,7 @@ userController(app);
 orderController(app);
 cartController(app);
 checkOutController(app);
-if(process.env.ENV === "DEV"){
+if(process.env.STATUS === "DEV"){
     seedDataController(app);
 }
 app.listen(port);

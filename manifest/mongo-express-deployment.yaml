@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
+  name: mongo-express-deployment                              #Name Deployment
+  labels:
+    app: mongo-express
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: mongo-express
+    spec:                                                 #Specification for pods
+      containers:
+        - name: mongo-express                                       #1 container inside the pod
+          image: mongo-express
+          imagePullPolicy: Always                         # 7
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ME_CONFIG_OPTIONS_EDITORTHEME
+              value: "darcula"
+            - name: ME_CONFIG_MONGODB_ENABLE_ADMIN
+              value: "true"
+            - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: ME_CONFIG_MONGODB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: database_url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-express-service
+spec:
+  selector:
+    app: mongo-express
+  type: LoadBalancer #assigns service an ETERNAL IP address and so accepts external requests
+  ports:
+    - protocol: TCP
+      port: 8081 #ServicePort
+      targetPort: 8081 #Containerport
+      nodePort: 30000 #port for ecternal IP address, port you need to put into browser (must be between 30000-32767)
+
+      #Cluster ip will give the service an internal IP
+      #Cluster ip will give the LoadBalancer an internal IP and external IP
+
+
+
+

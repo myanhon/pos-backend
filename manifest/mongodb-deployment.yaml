@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
+  name: mongodb-deployment                                #Name Deployment
+  labels:
+    app: mongodb
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: mongodb
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: mongodb
+    spec:                                                 #Specification for pods
+      containers:
+        - name: mongodb                                     #1 container inside the pod
+          image: mongo
+          imagePullPolicy: Always                         # 7
+          ports:
+          - containerPort: 27017 #mongo doc port
+          env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: mongo-root-username
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: mongo-root-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+      app: mongodb
+  ports:
+      - protocol: TCP
+        port: 27017 #ServicePort
+        targetPort: 27017 #Containerport
+
+

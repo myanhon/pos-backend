@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
+  name: nginx-deployment                                #Name Deployment
+  labels:
+    app: nginx
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: nginx
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: nginx
+    spec:                                                 #Specification for pods
+      containers:
+        - name: nginx                                     #1 container inside the pod
+          image: nginx:1.16
+          imagePullPolicy: Always                         # 7
+          ports:
+            - containerPort: 8080

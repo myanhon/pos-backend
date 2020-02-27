@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service                                                    #Which Component
+metadata:
+  name: nginx-service
+spec:                                                            #each spec has own attributes for each kind
+  type: LoadBalancer
+  selector:
+   app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080 #target the port of the pod
+
+
+
+
+
+
+
+
+
+
+
+
+      #Status -> Desired state? Actual state? will added automatically (etcs hold data such as status)
+      #Desired != Actual -> k8s tries to fix it (Self Healing)
