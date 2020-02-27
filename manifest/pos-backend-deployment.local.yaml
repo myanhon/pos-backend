@@ -16,8 +16,8 @@ spec:                                                    #Specification for depl
     spec:                                                 #Specification for pods
       containers:
         - name: pos-backend                                     #1 container inside the pod
-          image: mikeycontainer.azurecr.io/pos-backend:latest
-          imagePullPolicy: Always                         # 7
+          image: pos-backend
+          imagePullPolicy: IfNotPresent                         # 7
           ports:
             - containerPort: 3000 #mongo doc port
 ---
