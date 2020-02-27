@@ -20,6 +20,39 @@ spec:                                                    #Specification for depl
           imagePullPolicy: Always                         # 7
           ports:
             - containerPort: 3000 #mongo doc port
+          env:
+            - name: MONGO_POS_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-backend-configmap
+                  key: mongo-url
+            - name: STATUS
+              value: "Dev"
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: stripe-pk
+            - name: REFRESH_TOKEN_SECRET
+            valueFrom:
+              secretKeyRef:
+                name:  pos-backend-secret
+                key: refresh-token-secret
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: stripe-pk
+            - name: STRIPE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: session-key
+            - name: RANDOM_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-backend-configmap
+                  key: random-url
 ---
 apiVersion: v1
 kind: Service
