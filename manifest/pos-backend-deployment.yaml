@@ -34,10 +34,10 @@ spec:                                                    #Specification for depl
                   name:  pos-backend-secret
                   key: stripe-pk
             - name: REFRESH_TOKEN_SECRET
-            valueFrom:
-              secretKeyRef:
-                name:  pos-backend-secret
-                key: refresh-token-secret
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: refresh-token-secret
             - name: SESSION_SECRET
               valueFrom:
                 secretKeyRef:
