@@ -9,5 +9,4 @@ ARG REFRESH_TOKEN_SECRET
 ARG SESSION_SECRET
 ARG STRIPE_SECRET
 RUN npm install
-RUN npm run build
 CMD ["node","server.js"]
