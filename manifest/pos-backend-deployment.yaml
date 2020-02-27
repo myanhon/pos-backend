@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
+  name: pos-backend-deployment                                #Name Deployment
+  labels:
+    app: pos-backend
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: pos-backend
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: pos-backend
+    spec:                                                 #Specification for pods
+      containers:
+        - name: pos-backend                                     #1 container inside the pod
+          image: mikeycontainer.azurecr.io/pos-backend:latest
+          imagePullPolicy: Always                         # 7
+          ports:
+            - containerPort: 3000 #mongo doc port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pos-backend-service
+spec:
+  selector:
+    app: mongodb
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 3000 #ServicePort
+      targetPort: 3000 #Containerport
+
+
