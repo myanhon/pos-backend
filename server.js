@@ -3,7 +3,6 @@ require('./config/passport-config.js');
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const config = require('./config/config');
 const seedDataController = require('./controllers/seedDataController');
 const productController = require('./controllers/productController');
 const userController = require('./controllers/userController');
@@ -42,13 +41,26 @@ app.use(function (req, res, next) {
     next();
 });
 
+let mongooseUrl = process.env.MONGO_DB_ATLAS || process.env.MONGO_POS_URI;
+console.log('current url: ', mongooseUrl);
+mongoose.connect(mongooseUrl, {
+    useNewUrlParser: true, useUnifiedTopology: true
+}).then(() => {
+        console.log('mongo connected');
+    }
+).catch(error => {
+    console.log('AWOOOO');
+    console.log("error:", error);
+});
+
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     httpOnly: true, // dont let browser javascript access cookie ever
     resave: false, // Should we resave our session variables if nothing has changed
     saveUninitialized: false, // Do you want to save empty values?
     store: new MongoStore({
-    mongooseConnection: mongoose.connection // use existed mongoose connection instead of a new one
+        mongooseConnection: mongoose.connection // use existed mongoose connection instead of a new one
     }),
     cookie: {maxAge: 180 * 60 * 1000} //How long a session should live
 }));
@@ -65,7 +77,6 @@ app.use(function (req, res, next) {
     res.locals.user = req.user;
     next();
 });
-mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
 
 productController(app);
 userController(app);

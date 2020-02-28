@@ -54,11 +54,9 @@ let seedProductsData = [
 module.exports = function (app) {
 
     app.get('/seedData', function (req, res) {
-
-        user.create(seedUsersData, function (err, results) {
+        user.create(seedUsersData, function (err) {
             if (err) throw err;
         });
-
         product.create(seedProductsData, function (err) {
             if (err) throw err;
         });
@@ -66,19 +64,10 @@ module.exports = function (app) {
     });
 
     app.get('/deleteSeed', function (req, res) {
-
-        mongoose.connection.collections['users'].drop(() => {
-            console.log('users dropped');
+        mongoose.connection.db.dropDatabase(function(err) {
+            if (err) throw err;
+            res.sendStatus(200);
         });
-
-        mongoose.connection.collections['products'].drop(() => {
-            console.log('products dropped');
-        });
-
-        mongoose.connection.collections['orders'].drop(() => {
-            console.log('orders dropped');
-        });
-        res.send('Collections Emptied');
     });
 
 };

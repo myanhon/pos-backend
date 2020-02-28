@@ -19,7 +19,7 @@ spec:                                                    #Specification for depl
           image: mikeycontainer.azurecr.io/pos-backend:latest
           imagePullPolicy: Always                         # 7
           ports:
-            - containerPort: 3000 #mongo doc port
+            - containerPort: 3000 # access port
           env:
             - name: MONGO_POS_URI
               valueFrom:
@@ -27,7 +27,7 @@ spec:                                                    #Specification for depl
                   name: pos-backend-configmap
                   key: mongo-url
             - name: STATUS
-              value: "Dev"
+              value: "DEV"
             - name: ACCESS_TOKEN_SECRET
               valueFrom:
                 secretKeyRef:
@@ -48,11 +48,6 @@ spec:                                                    #Specification for depl
                 secretKeyRef:
                   name:  pos-backend-secret
                   key: session-key
-            - name: RANDOM_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: pos-backend-configmap
-                  key: random-url
 ---
 apiVersion: v1
 kind: Service
