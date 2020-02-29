@@ -1,3 +1,43 @@
+---
+apiVersion: v1
+kind: Secret                #Secret only live in k8s cluster not in repo
+metadata:
+  name: pos-backend-secret
+type: Opaque #"Opque" - default for arbitrary key-value pairs (TLS cert)
+data:
+  session-key: MzU2NDVmNjg2YmFlZjA1MTFlMzdlMWYwMmE0NGFjMGNjYTMzM2Y3YjNkZGEyZTA5MDU4YWM0YjgxZjM2NjZjOTI3NDVmMGI5NTE5ZTFiY2E4YWM1MmZiYzVkMTQwNmQyOWQ4NzBjZTJlZDE2Y2M1ZWRkY2VhMmFmZGMwOTYyMmE= #value must be base64 encoded
+  stripe-pk: c2tfdGVzdF9hNXlyQ0ZrZkNrSGNlTGlNRWFabUNvRE4wMHBTQUZrNmVH  #value must be base64 encoded
+  access-token-secret: ZWM5ZmRlYzE4NjljNDZhNWI5ZjQyOThkYjk1MmEwNmQ1ZGQ0NGI0MjdiNmM4OTAyYTE0YWE3OGVmZWNmZjExNTg2MDQwMTZkY2FmYWFiYzVjMTIwMzI0OWE2NTZkNjM4YjJjZGE3ZDRhZmRmN2U4ZmQwYzYwOWJkZWJkMGE1ZTk= #value must be base64 encoded
+  refresh-token-secret: YWU3OGFjOTEwYmFlZGY4MTgzMWJiNGQ5ZDhmNWJjZDA2Mzc1ZDczZTg1MGJmNjE5N2ZmMTdmOTVjYjExYmYxNGJjZTRhMjUwY2E1ZGQwY2NkZDM3YTA3ODMxN2U4NWE2ZTBjOWEyZDAwNzE2ZWRkY2Y3ZWJiYzIyZjkxYWU4YjU= #value must be base64 encoded
+...
+---
+apiVersion: v1
+kind: Secret                #Secret only live in k8s cluster not in repo
+metadata:
+  name: mongodb-secret
+type: Opaque #"Opque" - default for arbitrary key-value pairs (TLS cert)
+data:
+  mongo-root-username: dXNlcm5hbWU=   #value must be base64 encoded
+  mongo-root-password: cGFzc3dvcmQ=  #value must be base64 encoded
+...
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb-configmap
+data:
+  database_url: mongodb-service
+...
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pos-backend-configmap
+data:
+  mongo-url:  mongodb://username:password@mongodb-service:27017/pos-backend?authSource=admin
+  mongo-db-atlas-url: mongodb://admin:welcomehacker@cluster0-shard-00-00-g87w9.mongodb.net:27017,cluster0-shard-00-01-g87w9.mongodb.net:27017,cluster0-shard-00-02-g87w9.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
+...
+---
 apiVersion: apps/v1
 kind: Deployment                                         #Which Component
 metadata:
@@ -13,11 +53,11 @@ spec:                                                    #Specification for depl
     metadata:
       labels:
         app: pos-backend
-    spec:                                                 #Specification for pods
+    spec:
       containers:
-        - name: pos-backend                                     #1 container inside the pod
+        - name: pos-backend
           image: mikeycontainer.azurecr.io/pos-backend:latest
-          imagePullPolicy: Always                         # 7
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000 # access port
           env:
@@ -25,7 +65,7 @@ spec:                                                    #Specification for depl
               valueFrom:
                 configMapKeyRef:
                   name: pos-backend-configmap
-                  key: mongo-url
+                  key: mongo-db-atlas-url
             - name: STATUS
               value: "DEV"
             - name: ACCESS_TOKEN_SECRET
@@ -48,6 +88,86 @@ spec:                                                    #Specification for depl
                 secretKeyRef:
                   name:  pos-backend-secret
                   key: session-key
+...
+---
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
+  name: mongodb-deployment                                #Name Deployment
+  labels:
+    app: mongodb
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: mongodb
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: mongodb
+    spec:                                                 #Specification for pods
+      containers:
+        - name: mongodb                                     #1 container inside the pod
+          image: mongo
+          imagePullPolicy: Always                         # 7
+          ports:
+            - containerPort: 27017 #mongo doc port
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+...
+---
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
+  name: mongo-express-deployment                              #Name Deployment
+  labels:
+    app: mongo-express
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: mongo-express
+    spec:                                                 #Specification for pods
+      containers:
+        - name: mongo-express                                       #1 container inside the pod
+          image: mongo-express
+          imagePullPolicy: Always                         # 7
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ME_CONFIG_OPTIONS_EDITORTHEME
+              value: "darcula"
+            - name: ME_CONFIG_MONGODB_ENABLE_ADMIN
+              value: "true"
+            - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: ME_CONFIG_MONGODB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: database_url
+---
 ---
 apiVersion: v1
 kind: Service
@@ -61,5 +181,35 @@ spec:
     - protocol: TCP
       port: 80 #ServicePort
       targetPort: 3000 #Containerport
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017 #ServicePort
+      targetPort: 27017 #Containerport
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-express-service
+spec:
+  selector:
+    app: mongo-express
+  type: LoadBalancer #assigns service an ETERNAL IP address and so accepts external requests
+  ports:
+    - protocol: TCP
+      port: 8081 #ServicePort
+      targetPort: 8081 #Containerport
+      nodePort: 30000 #port for ecternal IP address, port you need to put into browser (must be between 30000-32767)
 
-
+      #Cluster ip will give the service an internal IP
+      #Cluster ip will give the LoadBalancer an internal IP and external IP
+...

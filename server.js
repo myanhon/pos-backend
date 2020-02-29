@@ -41,7 +41,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-let mongooseUrl = process.env.MONGO_DB_ATLAS || process.env.MONGO_POS_URI;
+let mongooseUrl = process.env.MONGO_POS_URI || process.env.MONGO_DB_ATLAS;
 console.log('current url: ', mongooseUrl);
 mongoose.connect(mongooseUrl, {
     useNewUrlParser: true, useUnifiedTopology: true
@@ -49,8 +49,7 @@ mongoose.connect(mongooseUrl, {
         console.log('mongo connected');
     }
 ).catch(error => {
-    console.log('AWOOOO');
-    console.log("error:", error);
+    console.log("mongo not connected error:", error);
 });
 
 
