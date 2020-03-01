@@ -36,6 +36,9 @@ metadata:
 data:
   mongo-url:  mongodb://username:password@mongodb-service:27017/pos-backend?authSource=admin
   mongo-db-atlas-url: mongodb://admin:welcomehacker@cluster0-shard-00-00-g87w9.mongodb.net:27017,cluster0-shard-00-01-g87w9.mongodb.net:27017,cluster0-shard-00-02-g87w9.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
+  auth-url: auth-server-service
+  api-url: api-server-service
+  pos-frontend-url: pos-frontend-service
 ...
 ---
 apiVersion: apps/v1
@@ -68,6 +71,11 @@ spec:                                                    #Specification for depl
                 configMapKeyRef:
                   name: pos-backend-configmap
                   key: mongo-url
+            - name: POS_FRONTEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-backend-configmap
+                  key: pos-frontend-url
             - name: STATUS
               value: "DEV"
             - name: ACCESS_TOKEN_SECRET
@@ -122,6 +130,11 @@ spec:                                                    #Specification for depl
                 configMapKeyRef:
                   name: pos-backend-configmap
                   key: mongo-url
+            - name: POS_FRONTEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-backend-configmap
+                  key: pos-frontend-url
             - name: STATUS
               value: "DEV"
             - name: ACCESS_TOKEN_SECRET
@@ -153,7 +166,7 @@ metadata:
   labels:
     app: mongodb
 spec:                                                    #Specification for deployment
-  replicas: 2                                            #How Many Replicas
+  replicas: 1                                            #How Many Replicas
   selector:
     matchLabels:
       app: mongodb
@@ -188,7 +201,7 @@ metadata:
   labels:
     app: mongo-express
 spec:                                                    #Specification for deployment
-  replicas: 2                                            #How Many Replicas
+  replicas: 1                                            #How Many Replicas
   selector:
     matchLabels:
       app: mongo-express
