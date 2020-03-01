@@ -7,12 +7,11 @@ COPY ./controllers/authenticateTokenController.js ./controllers/
 COPY ./models/userModel.js ./models/
 COPY package.json .
 ARG MONGO_POS_URI
-ENV MONGO_DB_ATLAS =mongodb://admin:welcomehacker@cluster0-shard-00-00-g87w9.mongodb.net:27017,cluster0-shard-00-01-g87w9.mongodb.net:27017,cluster0-shard-00-02-g87w9.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
-ENV STATUS=DEV
-ENV ACCESS_TOKEN_SECRET=ec9fdec1869c46a5b9f4298db952a06d5dd44b427b6c8902a14aa78efecff1158604016dcafaabc5c1203249a656d638b2cda7d4afdf7e8fd0c609bdebd0a5e9
-ENV REFRESH_TOKEN_SECRET=ae78ac910baedf81831bb4d9d8f5bcd06375d73e850bf6197ff17f95cb11bf14bce4a250ca5dd0ccdd37a078317e85a6e0c9a2d00716eddcf7ebbc22f91ae8b5
-ENV SESSION_SECRET=35645f686baef0511e37e1f02a44ac0cca333f7b3dda2e09058ac4b81f3666c92745f0b9519e1bca8ac52fbc5d1406d29d870ce2ed16cc5eddcea2afdc09622a
-ENV STRIPE_SECRET=sk_test_a5yrCFkfCkHceLiMEaZmCoDN00pSAFk6eG
+ARG STATUS
+ARG ACCESS_TOKEN_SECRET
+ARG REFRESH_TOKEN_SECRET
+ARG SESSION_SECRET
+ARG STRIPE_SECRET
 
 RUN npm install
 CMD ["node","auth-server.js"]

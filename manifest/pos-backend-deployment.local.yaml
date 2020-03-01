@@ -95,6 +95,60 @@ spec:                                                    #Specification for depl
 apiVersion: apps/v1
 kind: Deployment                                         #Which Component
 metadata:
+  name: auth-server-deployment                                #Name Deployment
+  labels:
+    app: auth-server
+spec:                                                    #Specification for deployment
+  replicas: 2                                            #How Many Replicas
+  selector:
+    matchLabels:
+      app: auth-server
+  template:                                               #Blue print of the pod
+    metadata:
+      labels:
+        app: auth-server
+    spec:
+      #      imagePullSecrets:
+      #      - name: <your secret name>      #for private container repos
+      containers:
+        - name: auth-server
+          image: auth-server
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000 # access port
+          env:
+            - name: MONGO_POS_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-backend-configmap
+                  key: mongo-url
+            - name: STATUS
+              value: "DEV"
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: stripe-pk
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: refresh-token-secret
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: stripe-pk
+            - name: STRIPE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name:  pos-backend-secret
+                  key: session-key
+...
+---
+apiVersion: apps/v1
+kind: Deployment                                         #Which Component
+metadata:
   name: mongodb-deployment                                #Name Deployment
   labels:
     app: mongodb
@@ -183,6 +237,20 @@ spec:
     - protocol: TCP
       port: 80 #ServicePort
       targetPort: 3000 #Containerport
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-server-service
+spec:
+  selector:
+    app: auth-server
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 4000 #ServicePort
+      targetPort: 4000 #Containerport
 ...
 ---
 apiVersion: v1

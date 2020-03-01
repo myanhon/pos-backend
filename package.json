@@ -7,7 +7,8 @@
     "ds": "nodemon server.js",
     "dsa": "nodemon auth-server.js",
     "start": "node ./dist/server.js",
-    "build:local": "docker rmi -f pos-backend && docker build -t pos-backend . && kubectl delete deployment pos-backend-deployment &&kubectl apply -f ./manifest/pos-backend-deployment.local.yaml"
+    "build:local": "docker rmi -f pos-backend && docker rmi -f auth-server && docker build -t auth-server -f Dockerfile.authserver . && docker build -t pos-backend -f Dockerfile.api . && kubectl delete deployment pos-backend-deployment && kubectl delete deployment auth-server-deployment &&kubectl apply -f ./manifest/pos-backend-deployment.local.yaml"
+
   },
   "author": "",
   "license": "ISC",
