@@ -41,24 +41,24 @@ data:
 apiVersion: apps/v1
 kind: Deployment                                         #Which Component
 metadata:
-  name: pos-backend-deployment                                #Name Deployment
+  name: api-server-deployment                                #Name Deployment
   labels:
-    app: pos-backend
+    app: api-server
 spec:                                                    #Specification for deployment
   replicas: 2                                            #How Many Replicas
   selector:
     matchLabels:
-      app: pos-backend
+      app: api-server
   template:                                               #Blue print of the pod
     metadata:
       labels:
-        app: pos-backend
+        app: api-server
     spec:
 #      imagePullSecrets:
 #      - name: <your secret name>      #for private container repos
       containers:
-        - name: pos-backend
-          image: pos-backend
+        - name: api-server
+          image: api-server
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000 # access port
@@ -228,10 +228,10 @@ spec:                                                    #Specification for depl
 apiVersion: v1
 kind: Service
 metadata:
-  name: pos-backend-service
+  name: api-server-service
 spec:
   selector:
-    app: pos-backend
+    app: api-server
   type: LoadBalancer
   ports:
     - protocol: TCP
