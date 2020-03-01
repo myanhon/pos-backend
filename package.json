@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "ds": "nodemon server.js",
-    "dsa": "nodemon authServer.js",
+    "dsa": "nodemon auth-server.js",
     "start": "node ./dist/server.js",
     "build:local": "docker rmi -f pos-backend && docker build -t pos-backend . && kubectl delete deployment pos-backend-deployment &&kubectl apply -f ./manifest/pos-backend-deployment.local.yaml"
   },

@@ -5,10 +5,10 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
-const config = require('./config/config');
 const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
+const configDB = require('./config/configDB');
 const User = require('./models/userModel');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session); // instead of default MemoryStorage of the server
@@ -142,5 +142,5 @@ app.delete('/logout', (req, res) => {
     res.sendStatus(204);
 });
 
-mongoose.connect(config.getDbConnection(),{ useNewUrlParser: true , useUnifiedTopology: true});
+configDB.getDbConnection();
 app.listen(port);

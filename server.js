@@ -3,6 +3,7 @@ require('./config/passport-config.js');
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const configDB = require('./config/configDB');
 const seedDataController = require('./controllers/seedDataController');
 const productController = require('./controllers/productController');
 const userController = require('./controllers/userController');
@@ -41,17 +42,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-let mongooseUrl = process.env.MONGO_POS_URI || process.env.MONGO_DB_ATLAS;
-console.log('current url: ', mongooseUrl);
-mongoose.connect(mongooseUrl, {
-    useNewUrlParser: true, useUnifiedTopology: true
-}).then(() => {
-        console.log('mongo connected');
-    }
-).catch(error => {
-    console.log("mongo not connected error:", error);
-});
-
+configDB.getDbConnection();
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
