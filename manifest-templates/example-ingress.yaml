@@ -1,0 +1,51 @@
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-server-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "http://pos.frontend.io"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+spec:
+  rules:
+    - host: pos.backend.io
+      http:
+        paths:
+        - path: /
+          backend:
+              serviceName: api-server-service
+              servicePort: 80
+...
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: auth-server-ingress
+spec:
+  rules:
+    - host: pos.auth.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: auth-server-service
+              servicePort: 4000
+...
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pos-frontend-ingress
+spec:
+  rules:
+    - host: pos.frontend.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: pos-frontend-service
+              servicePort: 89
+...
+

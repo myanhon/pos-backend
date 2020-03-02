@@ -53,7 +53,7 @@ app.use(function (req, res, next) {
     res.locals.user = req.user;
     next();
 });
-
+console.log('process.env.POS_FRONTEND_URL:', process.env.POS_FRONTEND_URL);
 productController(app);
 userController(app);
 orderController(app);
