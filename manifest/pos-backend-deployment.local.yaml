@@ -36,9 +36,9 @@ metadata:
 data:
   mongo-url:  mongodb://username:password@mongodb-service:27017/pos-backend?authSource=admin
   mongo-db-atlas-url: mongodb://admin:welcomehacker@cluster0-shard-00-00-g87w9.mongodb.net:27017,cluster0-shard-00-01-g87w9.mongodb.net:27017,cluster0-shard-00-02-g87w9.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
-  auth-url: pos.auth.io:31102
-  api-url: pos.backend.io:31835
-  pos-frontend-url: pos.frontend.io:31901
+  auth-url: http://pos.auth.io:31102
+  api-url: http://pos.backend.io:31835
+  pos-frontend-url: http://pos.frontend.io:31901
 ...
 ---
 apiVersion: apps/v1
