@@ -6,6 +6,7 @@ COPY ./config ./config/
 COPY ./controllers/authenticateTokenController.js ./controllers/
 COPY ./models/userModel.js ./models/
 COPY package.json .
+COPY package-lock.json .
 ARG MONGO_POS_URI
 ARG STATUS
 ARG ACCESS_TOKEN_SECRET
@@ -14,5 +15,5 @@ ARG SESSION_SECRET
 ARG STRIPE_SECRET
 ARG POS_FRONTEND_URL
 
-RUN npm install
+RUN npm ci
 CMD ["node","auth-server.js"]

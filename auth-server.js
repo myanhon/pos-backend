@@ -130,4 +130,9 @@ app.delete('/logout', (req, res) => {
 });
 
 configDB.getDbConnection();
+app.use(function (req, res, next) {
+    console.log('authServer check user',req.user);
+    next();
+});
+
 app.listen(port);

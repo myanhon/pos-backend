@@ -6,7 +6,7 @@ metadata:
 type: Opaque #"Opque" - default for arbitrary key-value pairs (TLS cert)
 data:
   session-key: MzU2NDVmNjg2YmFlZjA1MTFlMzdlMWYwMmE0NGFjMGNjYTMzM2Y3YjNkZGEyZTA5MDU4YWM0YjgxZjM2NjZjOTI3NDVmMGI5NTE5ZTFiY2E4YWM1MmZiYzVkMTQwNmQyOWQ4NzBjZTJlZDE2Y2M1ZWRkY2VhMmFmZGMwOTYyMmE= #value must be base64 encoded
-  stripe-pk: c2tfdGVzdF9hNXlyQ0ZrZkNrSGNlTGlNRWFabUNvRE4wMHBTQUZrNmVH  #value must be base64 encoded
+  stripe-pk: c2tfdGVzdF9hNXlyQ0ZrZkNrSGNlTGlNRWFabUNvRE4wMHBTQUZrNmVH #value must be base64 encoded
   access-token-secret: ZWM5ZmRlYzE4NjljNDZhNWI5ZjQyOThkYjk1MmEwNmQ1ZGQ0NGI0MjdiNmM4OTAyYTE0YWE3OGVmZWNmZjExNTg2MDQwMTZkY2FmYWFiYzVjMTIwMzI0OWE2NTZkNjM4YjJjZGE3ZDRhZmRmN2U4ZmQwYzYwOWJkZWJkMGE1ZTk= #value must be base64 encoded
   refresh-token-secret: YWU3OGFjOTEwYmFlZGY4MTgzMWJiNGQ5ZDhmNWJjZDA2Mzc1ZDczZTg1MGJmNjE5N2ZmMTdmOTVjYjExYmYxNGJjZTRhMjUwY2E1ZGQwY2NkZDM3YTA3ODMxN2U4NWE2ZTBjOWEyZDAwNzE2ZWRkY2Y3ZWJiYzIyZjkxYWU4YjU= #value must be base64 encoded
 ...
@@ -36,9 +36,9 @@ metadata:
 data:
   mongo-url:  mongodb://username:password@mongodb-service:27017/pos-backend?authSource=admin
   mongo-db-atlas-url: mongodb://admin:welcomehacker@cluster0-shard-00-00-g87w9.mongodb.net:27017,cluster0-shard-00-01-g87w9.mongodb.net:27017,cluster0-shard-00-02-g87w9.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority
-  auth-url: http://pos.auth.io:31102
-  api-url: http://pos.backend.io:31835
-  pos-frontend-url: http://pos.frontend.io:31901
+  auth-url: http://pos.auth.io
+  api-url: http://pos.backend.io
+  pos-frontend-url: http://pos.frontend.io
 ...
 ---
 apiVersion: apps/v1
@@ -48,7 +48,7 @@ metadata:
   labels:
     app: api-server
 spec:                                                    #Specification for deployment
-  replicas: 2                                            #How Many Replicas
+  replicas: 1                                            #How Many Replicas
   selector:
     matchLabels:
       app: api-server
@@ -92,12 +92,12 @@ spec:                                                    #Specification for depl
               valueFrom:
                 secretKeyRef:
                   name:  pos-backend-secret
-                  key: stripe-pk
+                  key: session-key
             - name: STRIPE_SECRET
               valueFrom:
                 secretKeyRef:
                   name:  pos-backend-secret
-                  key: session-key
+                  key: stripe-pk
 ...
 ---
 apiVersion: apps/v1
@@ -107,7 +107,7 @@ metadata:
   labels:
     app: auth-server
 spec:                                                    #Specification for deployment
-  replicas: 2                                            #How Many Replicas
+  replicas: 1                                            #How Many Replicas
   selector:
     matchLabels:
       app: auth-server
@@ -298,3 +298,56 @@ spec:
       #Cluster ip will give the service an internal IP
       #Cluster ip will give the LoadBalancer an internal IP and external IP
 ...
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-server-ingress
+  annotations:
+#    nginx.ingress.kubernetes.io/enable-cors: "true"
+#    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
+#    nginx.ingress.kubernetes.io/cors-allow-origin: "http://pos.frontend.io"
+#    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+spec:
+  rules:
+    - host: pos.backend.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: api-server-service
+              servicePort: 80
+...
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: auth-server-ingress
+spec:
+  rules:
+    - host: pos.auth.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: auth-server-service
+              servicePort: 4000
+...
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pos-frontend-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: pos.frontend.io
+      http:
+        paths:
+          - backend:
+              serviceName: pos-frontend-service
+              servicePort: 89
+...
+
+

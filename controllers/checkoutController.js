@@ -15,6 +15,8 @@ module.exports = function (app) {
     });
 
     app.post('/checkout',(req, res) => {
+        console.log("STRIPE_SECRET: ", process.env.STRIPE_SECRET);
+        console.log("req_user: ", req.user._id);
         if (!req.session.cart) {
             res.json({
                 message: "Cart is Empty"
