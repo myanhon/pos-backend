@@ -9,6 +9,7 @@ yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
 .dobi
+public
 
 # Editor directories and files
 .idea

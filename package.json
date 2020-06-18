@@ -9,8 +9,6 @@
     "start": "node ./dist/server.js",
     "build:local": "docker rmi -f api-server && docker rmi -f auth-server && docker build -t auth-server -f Dockerfile.authserver . && docker build -t api-server -f Dockerfile.api . ",
     "build:k8s": "kubectl delete deployment api-server-deployment && kubectl delete deployment auth-server-deployment && kubectl apply -f ./manifest/pos-backend-deployment.local.yaml"
-
-
   },
   "author": "",
   "license": "ISC",
@@ -32,6 +30,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.14",
     "mongoose-unique-validator": "^2.0.3",
+    "multer": "^1.4.2",
     "nodejs": "0.0.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",

@@ -20,8 +20,9 @@ const passport = require('passport');
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(express.static('public'));
 
 // Add headers
 app.use(function (req, res, next) {

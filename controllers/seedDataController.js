@@ -35,14 +35,21 @@ let seedProductsData = [
         price: 1.50,
         size: "Large",
         category: 'Cold Drinks',
-        url:'coca-cola.jpg'
+        productImage:'/coca-cola.jpg'
+    },
+    {
+        name: 'Fanta',
+        price: 1.50,
+        size: "Large",
+        category: 'Cold Drinks',
+        productImage:'/fanta.png'
     },
     {
         name: 'Sprite',
         price: 1.50,
         size: "Large",
         category: 'Cold Drinks',
-        url:'sprite.jpg'
+        productImage:'/sprite.jpg'
     },
     {
         name: 'Glou Glou',
