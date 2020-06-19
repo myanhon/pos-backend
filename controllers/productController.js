@@ -69,17 +69,35 @@ module.exports = function (app) {
   });
 
   app.post('/product', upload.single('productImage'), (req, res) => {
-    console.log('bodyyy', req.body);
-    console.log('filleee', req.file);
+    console.log('body', req.body);
+
     let productImageUrl = null;
     if (req.file) productImageUrl = req.file.path.replace(/\\/g, '/').substring('public'.length);
-    if (req.body._id) {
+    if (req.body._id && req.body.productImage !== null && req.body.productImage !== 'undefined') {
       Product.findByIdAndUpdate(req.body._id, {
         name: req.body.name,
         price: req.body.price,
         size: req.body.size,
         category: req.body.category,
         productImage: productImageUrl,
+      })
+        .exec()
+        .then((doc) => {
+          res.status(200).json({
+            message: 'Product updated',
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            error: err,
+          });
+        });
+    } else if (req.body._id) {
+      Product.findByIdAndUpdate(req.body._id, {
+        name: req.body.name,
+        price: req.body.price,
+        size: req.body.size,
+        category: req.body.category,
       })
         .exec()
         .then((doc) => {
@@ -116,7 +134,7 @@ module.exports = function (app) {
   });
 
   app.delete('/product', (req, res) => {
-    Product.remove({ _id: req.body._id })
+    Product.findOneAndRemove({ _id: req.body._id })
       .exec()
       .then((result) => {
         res.status(200).json({
