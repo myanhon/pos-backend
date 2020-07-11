@@ -66,13 +66,20 @@ app.post(
       //Same User
       const accessToken = generateAccessToken(user);
       const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-      req.login(passportUser, function (err) {
-        if (err) {
-          console.log(err);
-        }
-        res.json({ accessToken: accessToken, refreshToken: refreshToken });
-        next();
+
+      const newRefreshToken = new RefreshToken({
+        refreshToken: refreshToken,
       });
+
+      newRefreshToken.save().then(() => {
+        req.login(passportUser, function (err) {
+          if (err) {
+            console.log(err);
+          }
+          res.json({ accessToken: accessToken, refreshToken: refreshToken });
+          next();
+        });
+      })
     })(req, res, next);
   }
 );
