@@ -20,6 +20,7 @@ module.exports = function (app) {
     });
 
     app.get('/user/orders', authenticateToken,(req, res) => {
+        console.log("orders req.user", req.user)
         Order.find({user: req.user._id})
             .then(orders =>{
                 orders.forEach(order => {

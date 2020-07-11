@@ -8,6 +8,6 @@ const orderSchema = new Schema({
     paymentId: {type: String, required: true}
 });
 
-module.exports = mongoose.model("Order",orderSchema,"Order");
+module.exports = mongoose.model("Order",orderSchema,"order");
 
 

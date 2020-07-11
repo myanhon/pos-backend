@@ -1,5 +1,6 @@
 const user = require('../models/userModel');
 const product = require('../models/productModel');
+const refreshtoken = require('../models/refreshTokenModel');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 let seedUsersData = [
@@ -16,7 +17,11 @@ let seedUsersData = [
     role: 'Worker',
   },
 ];
-
+let refreshTokenSeedData = [
+  {
+    refreshToken: '1234',
+  },
+];
 let seedProductsData = [
   {
     name: 'Fish Cutlet',
@@ -63,17 +68,20 @@ let seedProductsData = [
 ];
 
 module.exports = function (app) {
-  app.get('/seedData', function (req, res) {
+  app.get('/seed', function (req, res) {
     user.create(seedUsersData, function (err) {
       if (err) throw err;
     });
     product.create(seedProductsData, function (err) {
       if (err) throw err;
     });
+    refreshtoken.create(refreshTokenSeedData, function (err) {
+      if (err) throw err;
+    });
     res.sendStatus(200);
   });
 
-  app.get('/deleteSeed', function (req, res) {
+  app.get('/seedDelete', function (req, res) {
     mongoose.connection.db.dropDatabase(function (err) {
       if (err) throw err;
       res.sendStatus(200);
