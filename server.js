@@ -46,7 +46,7 @@ app.use(passport.session());
 
 //check cookie from request
 app.use(function (req, res, next) {
-    console.log('server check user',req.user);
+    //console.log('server check user',req.user);
     next();
 });
 

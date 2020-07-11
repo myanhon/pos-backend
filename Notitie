@@ -8,3 +8,5 @@ res.json Sends data in JSON format and ends the request.
 create random secret
 require('crypto').randomBytes(64).toString('hex')
 
+withCredentials IS BELANGRIJK
+

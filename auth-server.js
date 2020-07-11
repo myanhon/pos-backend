@@ -43,16 +43,6 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 }
 
-app.get('/getRefreshtokenTest', (req, res) => {
-  console.log('refreshtoken binnen: ', req.body.refreshToken);
-  RefreshToken.findOne({ refreshToken: req.body.refreshToken })
-    .select('refreshToken')
-    .exec()
-    .then((token) => {
-      res.status(200).json(token);
-    });
-});
-
 app.post(
   '/login',
   check('email', 'Invalid email').notEmpty().isEmail(),
@@ -113,21 +103,19 @@ app.post(
       if (!passportUser) return res.status(400).json({ message: info.message });
       const user = { email: passportUser.email };
       const accessToken = generateAccessToken(user);
-      //Same User
       const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-    
 
       const newRefreshToken = new RefreshToken({
         refreshToken: refreshToken,
       });
-      newRefreshToken.save()
-
-      req.login(passportUser, function (err) {
-        if (err) {
-          console.log(err);
-        }
-        res.json({ accessToken: accessToken, refreshToken: refreshToken });
-        next();
+      newRefreshToken.save().then(() => {
+        req.login(passportUser, function (err) {
+          if (err) {
+            console.log(err);
+          }
+          res.json({ accessToken: accessToken, refreshToken: refreshToken });
+          next();
+        });
       });
     })(req, res, next);
   }
@@ -137,16 +125,16 @@ app.post('/refreshToken', (req, res) => {
   const refreshToken = req.body.refreshToken;
   if (refreshToken == null) return res.sendStatus(401);
   RefreshToken.findOne({ refreshToken: req.body.refreshToken })
-  .select('refreshToken')
-  .exec()
-  .then((result) => { 
-      if(!result) return res.sendStatus(403); //Do we have a valid refreshtoken that exist for this refresh. If it does not exist return err
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    .select('refreshToken')
+    .exec()
+    .then((result) => {
+      if (!result) return res.sendStatus(403); //Do we have a valid refreshtoken that exist for this refresh. If it does not exist return err
+      jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
         const accessToken = generateAccessToken({ email: user.email });
         res.json({ accessToken: accessToken });
-  }); 
-  });
+      });
+    });
 });
 
 app.post('/verify', authenticateToken, (req, res) => {
@@ -155,7 +143,6 @@ app.post('/verify', authenticateToken, (req, res) => {
 
 app.delete('/logout', (req, res) => {
   req.logout();
-  console.log('RefreshToken Logout', req.body.refreshToken);
   RefreshToken.findOneAndDelete({ refreshToken: req.body.refreshToken })
     .exec()
     .then(() => {
@@ -168,12 +155,11 @@ app.delete('/logout', (req, res) => {
         error: err,
       });
     });
-
 });
 
 configDB.getDbConnection();
 app.use(function (req, res, next) {
-  console.log('authServer check user', req.user);
+  //console.log('authServer check user', req.user);
   next();
 });
 

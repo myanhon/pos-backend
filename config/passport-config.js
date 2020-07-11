@@ -33,6 +33,7 @@ passport.use('local.register', new LocalStrategy({
             const newUser = new User();
             newUser.email = email;
             newUser.password = newUser.encryptPassword(password);
+            newUser.name = req.body.name
             newUser.save(err => {
                     if (err) return done(err);
                     return done(null, newUser);
