@@ -31,6 +31,7 @@ const upload = multer({
 module.exports = function (app) {
   app.get('/products', (req, res) => {
     Product.find()
+      .sort('name size')
       .select(selectString)
       .exec()
       .then((docs) => {
