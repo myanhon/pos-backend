@@ -26,7 +26,7 @@ module.exports = function (app) {
             // Token is created using Stripe Checkout or Elements!
             // Get the payment token ID submitted by the form:
             stripe.charges.create({
-                amount: cart.totalPrice * 100,
+                amount: cart.totalPrice.toFixed(2) * 100,
                 currency: "USD",
                 description: 'Example charge',
                 source: req.body.stripeToken,
@@ -35,7 +35,8 @@ module.exports = function (app) {
                     //req.user through passport
                     user: req.user._id,
                     cart: cart,
-                    name: req.user.name,
+                    name: req.body.name,
+                    address: req.body.address,
                     paymentId: charge.id
                 });
 
