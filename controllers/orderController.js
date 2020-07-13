@@ -1,5 +1,5 @@
 const Order = require('../models/orderModel');
-const selectString = 'user cart name address paymentId ';
+const selectString = 'user cart name size address paymentId ';
 
 
 module.exports = function (app) {

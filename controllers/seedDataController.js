@@ -17,11 +17,7 @@ let seedUsersData = [
     role: 'Worker',
   },
 ];
-let refreshTokenSeedData = [
-  {
-    refreshToken: '1234',
-  },
-];
+
 let seedProductsData = [
   {
     name: 'Fish Cutlet',

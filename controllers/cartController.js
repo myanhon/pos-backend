@@ -1,6 +1,6 @@
 const Cart = require('../models/cartModel');
 const Product = require('../models/productModel');
-const selectString = 'name amount price quantity category';
+const selectString = 'name amount size price quantity category';
 
 module.exports = function (app) {
     app.get('/add-to-cart/:id', (req, res) => {
