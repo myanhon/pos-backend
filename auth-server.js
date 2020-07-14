@@ -76,7 +76,7 @@ app.post(
           if (err) {
             console.log(err);
           }
-          res.json({ accessToken: accessToken, refreshToken: refreshToken });
+          res.json({ accessToken: accessToken, refreshToken: refreshToken, user:passportUser });
           next();
         });
       })

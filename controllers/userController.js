@@ -22,6 +22,7 @@ module.exports = function (app) {
     app.get('/user/orders', authenticateToken,(req, res) => {
         console.log("orders req.user", req.user)
         Order.find({user: req.user._id})
+            .sort({date:-1})
             .then(orders =>{
                 orders.forEach(order => {
                     const cart = new Cart(order.cart);

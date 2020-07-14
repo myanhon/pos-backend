@@ -1,7 +1,8 @@
 #stage 1
 FROM node:alpine3.10
 WORKDIR /app
-COPY auth-server.js .
+COPY ./auth-server.js .
+COPY ./models/refreshTokenModel.js ./models/
 COPY ./config ./config/
 COPY ./controllers/authenticateTokenController.js ./controllers/
 COPY ./models/userModel.js ./models/
@@ -14,6 +15,7 @@ ARG REFRESH_TOKEN_SECRET
 ARG SESSION_SECRET
 ARG STRIPE_SECRET
 ARG POS_FRONTEND_URL
+
 
 RUN npm ci
 CMD ["node","auth-server.js"]

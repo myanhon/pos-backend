@@ -6,12 +6,12 @@ const bcrypt = require('bcryptjs');
 let seedUsersData = [
   {
     name: 'Mike',
-    email: 'test@gmail.com',
+    email: 'mike@gmail.com',
     password: bcrypt.hashSync('test', 10),
     role: 'admin',
   },
   {
-    name: 'Noella',
+    name: 'Shaban',
     email: 'abc@gmail.com',
     password: bcrypt.hashSync('test', 10),
     role: 'Worker',
@@ -245,9 +245,6 @@ module.exports = function (app) {
       if (err) throw err;
     });
     product.create(seedProductsData, function (err) {
-      if (err) throw err;
-    });
-    refreshtoken.create(refreshTokenSeedData, function (err) {
       if (err) throw err;
     });
     res.sendStatus(200);

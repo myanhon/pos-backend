@@ -1,6 +1,6 @@
 module.exports = {
    setHeaders: function (req,res,next) {
-       let allowedOrigins = ["http://localhost:8080", "http://localhost:1080", process.env.POS_FRONTEND_URL];
+       let allowedOrigins = ["http://localhost:8080", "http://localhost:1080","http://localhost:8081",process.env.POS_FRONTEND_URL];
        let origin = req.headers.origin;
        if (allowedOrigins.includes(origin)) {
            res.header("Access-Control-Allow-Origin", origin); // restrict it to the required domain

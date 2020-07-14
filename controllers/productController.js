@@ -1,5 +1,6 @@
 const Product = require('../models/productModel.js');
 const selectString = 'name amount price size category url productImage';
+const authenticateToken = require('./authenticateTokenController');
 const multer = require('multer');
 const date = new Date();
 const storage = multer.diskStorage({
@@ -69,9 +70,7 @@ module.exports = function (app) {
     res.status(200);
   });
 
-  app.post('/product', upload.single('productImage'), (req, res) => {
-    console.log('body', req.body);
-
+  app.post('/product',authenticateToken, upload.single('productImage'), (req, res) => {
     let productImageUrl = null;
     if (req.file) productImageUrl = req.file.path.replace(/\\/g, '/').substring('public'.length);
     if (req.body._id && req.body.productImage !== null && req.body.productImage !== 'undefined') {
@@ -134,7 +133,7 @@ module.exports = function (app) {
     }
   });
 
-  app.delete('/product', (req, res) => {
+  app.delete('/product',authenticateToken, (req, res) => {
     Product.findOneAndRemove({ _id: req.body._id })
       .exec()
       .then((result) => {
